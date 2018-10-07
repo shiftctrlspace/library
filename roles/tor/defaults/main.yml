@@ -1,8 +1,0 @@
-# For building Tor from source.
-tor_package_build_dir: "/tmp/tor-package-source"
-
-# For system Tor configuration.
-tor_data_dir: "/var/lib/tor"
-
-# For system Onion services configuration.
-tor_onion_services_dir: "{{ tor_data_dir }}/onion-services"

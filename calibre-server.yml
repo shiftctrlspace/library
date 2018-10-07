@@ -22,13 +22,3 @@
     - role: tor
       when: tor_onion_service_server
     - calibre
-
-  tasks:
-    - name: "Add Onion service configurations."
-      when: tor_onion_service_server
-      template:
-        src: templates/onion-service.j2
-        dest: "/etc/tor/torrc.d/{{ item.value['name'] }}"
-        validate: "tor --verify-config -f %s"
-      with_dict: "{{ onion_services }}"
-      notify: Reload Tor configuration.
