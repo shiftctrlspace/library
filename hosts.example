@@ -1,0 +1,19 @@
+# This file is an example hosts inventory file for Ansible plays.
+#
+# You'll want to edit this file to include the IP addresses or domain
+# names of your server(s), along with which groups they belong in. See
+# the Ansible documentation for inventory files:
+#
+#     https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html
+#
+# In the simpler case, for example, if you just installed Raspbian on
+# an RPi using the NOOBS installer provided by the Raspberry Pi
+# foundation and have enabled the SSH server, you'll be able to use
+# this inventory by invoking the following command:
+#
+#     ansible-playbook -i hosts.example -u pi --ask-pass library.yml
+#
+# Otherwise, you should modify this inventory file as described in the
+# Ansible documentation, linked above.
+
+raspberry.local # Raspbian OS gives itself this domain name by default.

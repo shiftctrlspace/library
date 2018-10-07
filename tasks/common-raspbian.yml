@@ -1,0 +1,28 @@
+# Common tasks for Raspbian OS hosts.
+
+- name: Update Raspberry Pi firmware.
+  command: rpi-update
+  register: rpi_update
+
+- name: Reboot to activate new RPi firmware.
+  when: -1 < rpi_update.stdout_lines[-1].find("reboot is needed")
+  shell: "sleep 5 && shutdown -r now"
+  async: 1
+  poll: 0
+
+- name: Wait for reboot to complete.
+  when: -1 < rpi_update.stdout_lines[-1].find("reboot is needed")
+  wait_for_connection:
+    delay: 5
+    sleep: 5
+    timeout: 180
+
+# TODO: Figure out how to script disabling the hardware interfaces
+#       of the RPi version 3 hadware.
+#
+#       Of possible interest to do this is to read and learn from
+#       https://www.raspberrypi.org/documentation/configuration/device-tree.md
+#
+#- name: Disable unnecessary hardware interfaces
+#  command: dtparam spi=off
+

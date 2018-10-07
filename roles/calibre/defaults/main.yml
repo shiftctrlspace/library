@@ -1,0 +1,5 @@
+calibre_server_username: calibre
+calibre_server_home_dir: "/srv/{{ calibre_server_username }}"
+calibre_server_user_additional_groups: ssh
+calibre_server_library_dir: "{{ calibre_server_home_dir }}/{{ 'Neighborhood Library' | replace(' ', '\\x20') }}"
+calibre_server_listen_port: 8080

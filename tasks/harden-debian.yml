@@ -1,0 +1,10 @@
+# Tasks for hardening the base of a Debian-dervied OS host.
+
+- name: Install base hardening packages.
+  apt:
+    force_apt_get: yes
+    update_cache: yes
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - iptables

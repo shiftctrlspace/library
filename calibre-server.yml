@@ -1,0 +1,34 @@
+---
+# Playbook for deploying a Calibre Library, optionally also exposed
+# as Tor Onion service, that can also be administered by SSH over Tor.
+- name: Deploy Calibre content server and Tor server if requested.
+  hosts: all
+  remote_user: pi # Assume a Raspberry Pi running Raspbian by default.
+  become: yes     # We'll need superuser privileges, so, ask for them.
+
+  vars_files:
+    - vars.yml
+
+  pre_tasks:
+    - name: Run common tasks.
+      include_tasks: "tasks/common.yml"
+    - name: Include OS-specific tasks.
+      include_tasks: "tasks/common-{{ ansible_os_family | lower }}.yml"
+    - name: Include Raspbian-specific tasks.
+      include_tasks: "tasks/common-raspbian.yml"
+      when: raspbian # Raspbian is not exactly Debian.
+
+  roles:
+    - role: tor
+      when: tor_onion_service_server
+    - calibre
+
+  tasks:
+    - name: "Add Onion service configurations."
+      when: tor_onion_service_server
+      template:
+        src: templates/onion-service.j2
+        dest: "/etc/tor/torrc.d/{{ item.value['name'] }}"
+        validate: "tor --verify-config -f %s"
+      with_dict: "{{ onion_services }}"
+      notify: Reload Tor configuration.

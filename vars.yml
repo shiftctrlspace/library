@@ -1,0 +1,101 @@
+---
+# Main variable file.
+#
+# Feel free to customize this file to your liking. It is commented
+# thoroughly in the hope that you can tweak it for any environment.
+
+# By default, we assume that the managed hosts will be dedicated to
+# serving content from the Calibre server. To ensure that the most
+# resources are used for the library software, we flag that we'll
+# be removing unnecessary pacakges in order to free up more space.
+#
+# See the `unnecessary_packages` variable for a list of package
+# names that will be removed.
+uninstall_unnecessary_packages: true
+
+# Lists of packages deemed safe to remove, assuming what is desired
+# is a headless server.
+unnecessary_packages:
+  # Package names that are the same regardless of the underlying OS.
+  common:
+    - libreoffice*
+    - tree
+
+    # Don't use a star glob for these, in case they're not installed.
+    - wolfram-engine
+    - wolframscript
+
+  debian:
+    - adwaita-icon-theme
+    - alacarte
+    - ant
+    - aptitude*
+    - asciidoc
+    - aspell
+    - at
+    - autoconf
+    - blt
+    - bluealsa
+    - bluej
+    - bsd-mailx
+    - bsdmainutils
+    - cifs-utils
+    - claws-mail
+    - coinor-libcbc3
+    - coinor-libcgl1
+    - coinor-libclp1
+    - crda
+    - cups-*
+    - dblatex
+    - debian-reference-en
+    - desktop-base
+    - desktop-file-utils
+    - epiphany-browser
+    - exim*
+    - gnome-*
+    - gstreamer*
+    - gtk2*
+    - libgtk*
+    - light*
+    - lx*
+    - penguinspuzzle
+    - pipanel
+    - scratch
+    - sonic-pi
+
+  # TODO:
+  redhat:
+
+# Whether or not to install a Tor server and to provision any Onion
+# services on the managed host.
+tor_onion_service_server: true
+
+# Define the Onion services you want available on the managed host.
+# None of these will be added unless the `tor_onion_service_server`
+# variable is `true`.
+onion_services:
+
+  # This Onion service is used primarily for NAT punching.
+  ssh:
+    name: onion-ssh # The name of the Onion service directory.
+    version: 2      # The Onion service protocol.
+    virtport: 22    # The virtual port to expose on the Onion.
+    target_addr: 127.0.0.1 # The target address of the service.
+    target_port: 22        # The target port of the service.
+    auth_type: stealth     # The Onion's authentication type. This
+                           # can be `stealth`, `basic`, or `false`.
+    clients:        # A list of clients to authenticate.
+      - admin
+
+  # This Onion service makes the Calibre library available as an
+  # authenticated stealth Onion service.
+  library:
+    name: onion-library
+    version: 2
+    virtport: 80
+    target_addr: 127.0.0.1
+    target_port: 8080
+    auth_type: stealth
+    clients:
+      - alice
+      - bob

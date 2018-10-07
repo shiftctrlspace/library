@@ -1,0 +1,5 @@
+# Tasks common to all Operating Systems.
+
+#- name: Set automatic filesystem integrity checking.
+#  command: tune2fs -i 1m "LABEL=root" # TODO: Variablize the selection of the filesystem.
+#  ignore_errors: yes                  #       Once variablized, remove `ignore_errors`, too.

@@ -1,0 +1,30 @@
+# Common tasks for Debian-dervived operating systems.
+
+- name: Check for Raspbian OS.
+  stat:
+    path: /etc/rpi-issue
+    get_checksum: no
+  register: rpi_issue
+
+- name: Set Raspbian fact.
+  set_fact:
+    raspbian: true
+  when: rpi_issue.stat.exists
+
+- name: Uninstall unnecessary common packages.
+  when: uninstall_unnecessary_packages
+  apt:
+    name: "{{ unnecessary_packages['common'] }}"
+    state: absent
+    force_apt_get: yes
+    autoremove: yes
+    purge: yes
+
+- name: Uninstall unnecessary Debian packages.
+  when: ansible_os_family == "Debian"
+  apt:
+    name: "{{ unnecessary_packages['debian'] }}"
+    state: absent
+    force_apt_get: yes
+    autoremove: yes
+    purge: yes
