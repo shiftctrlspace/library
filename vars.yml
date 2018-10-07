@@ -18,50 +18,62 @@ uninstall_unnecessary_packages: true
 unnecessary_packages:
   # Package names that are the same regardless of the underlying OS.
   common:
-    - libreoffice*
-    - tree
+    - "libreoffice*"
+    - "tree"
 
     # Don't use a star glob for these, in case they're not installed.
-    - wolfram-engine
-    - wolframscript
+    - "wolfram-engine"
+    - "wolframscript"
 
   debian:
-    - adwaita-icon-theme
-    - alacarte
-    - ant
-    - aptitude*
-    - asciidoc
-    - aspell
-    - at
-    - autoconf
-    - blt
-    - bluealsa
-    - bluej
-    - bsd-mailx
-    - bsdmainutils
-    - cifs-utils
-    - claws-mail
-    - coinor-libcbc3
-    - coinor-libcgl1
-    - coinor-libclp1
-    - crda
-    - cups-*
-    - dblatex
-    - debian-reference-en
-    - desktop-base
-    - desktop-file-utils
-    - epiphany-browser
-    - exim*
-    - gnome-*
-    - gstreamer*
-    - gtk2*
-    - libgtk*
-    - light*
-    - lx*
-    - penguinspuzzle
-    - pipanel
-    - scratch
-    - sonic-pi
+    - "adwaita-icon-theme"
+    - "alacarte"
+    - "ant"
+    - "aptitude*"
+    - "asciidoc"
+    - "aspell"
+    - "at"
+    - "autoconf"
+    - "blt"
+    - "bluealsa"
+    - "bluej"
+    - "bsd-mailx"
+    - "bsdmainutils"
+    - "cifs-utils"
+    - "chromium*"
+    - "claws-mail"
+    - "coinor-libcbc3"
+    - "coinor-libcgl1"
+    - "coinor-libclp1"
+    - "crda"
+    - "cups-*"
+    - "dblatex"
+    - "debian-reference-en"
+    - "desktop-base"
+    - "desktop-file-utils"
+    - "epiphany-browser"
+    - "esound*"
+    - "exim*"
+    - "fonts*"
+    - "galculator"
+    - "gnome-*"
+    - "greenfoot"
+    - "gstreamer*"
+    - "gtk2*"
+    - "imagemagick*"
+    - "jackd*"
+    - "*javascript*"
+    - "libgtk*"
+    - "*lightdm*"
+    - "lx*"
+    - "*lxde*"
+    - "openbox*"
+    - "penguinspuzzle"
+    - "pipanel"
+    - "scratch"
+    - "sonic-pi"
+    - "*x11*"
+    - "xserver*"
 
   # TODO:
   redhat:
