@@ -1,15 +1,5 @@
+---
 # Common tasks for Debian-dervived operating systems.
-
-- name: Check for Raspbian OS.
-  stat:
-    path: /etc/rpi-issue
-    get_checksum: no
-  register: rpi_issue
-
-- name: Set Raspbian fact.
-  set_fact:
-    raspbian: true
-  when: rpi_issue.stat.exists
 
 - name: Uninstall unnecessary common packages.
   when: uninstall_unnecessary_packages
@@ -26,3 +16,25 @@
     state: absent
     autoremove: yes
     purge: yes
+
+- name: Upgrade remaining packages.
+  apt:
+    force_apt_get: yes
+    update_cache: yes
+    upgrade: yes
+    autoremove: yes
+
+- name: Check for Raspbian OS.
+  register: rpi_issue
+  stat:
+    path: /etc/rpi-issue
+    get_checksum: no
+
+- name: Set Raspbian fact.
+  set_fact:
+    raspbian: true
+  when: rpi_issue.stat.exists
+
+- name: Include Raspbian-specific tasks.
+  include_tasks: "common-raspbian.yml"
+  when: raspbian # Raspbian is not exactly Debian.

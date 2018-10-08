@@ -73,6 +73,11 @@ unnecessary_packages:
 # configurations. Set this to `false` if you prefer to skip hardening.
 hardened_hosts: true
 
+# When hardening hosts (with `hardened_hosts` set to `true`), we won't
+# allow SSH connections from any user not in one of these groups:
+sshd_allow_groups:
+  - ssh-users
+
 # Whether or not to install a Tor server and to provision any Onion
 # services on the managed host.
 tor_onion_service_server: true
@@ -109,7 +114,7 @@ onion_services:
 
 # Add the Calibre server user to these additional user groups.
 calibre_server_user_groups:
-  - ssh-user
+  - ssh-users
 
 calibre_libraries:
   library:

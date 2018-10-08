@@ -1,13 +1,15 @@
+---
 # Common tasks for Raspbian OS hosts.
 
 - name: Update Raspberry Pi firmware.
-  command: rpi-update
   register: rpi_update
+  command: rpi-update
+  changed_when: "'reboot is needed' in rpi_update.stdout_lines[-1]"
 
 - name: Reboot to activate new RPi firmware.
-  when: -1 < rpi_update.stdout_lines[-1].find("reboot is needed")
+  when: rpi_update is changed
   block:
-    - name: Invoking reboot command.
+    - name: Rebooting Raspbian.
       shell: "sleep 5 && shutdown -r now"
       async: 1
       poll: 0

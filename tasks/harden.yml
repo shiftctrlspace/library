@@ -1,0 +1,22 @@
+---
+# Hardening tasks common to all Operating Systems.
+
+- name: Create SSH users group.
+  group:
+    name: "{{ item }}"
+    state: present
+    system: yes
+  loop: "{{ sshd_allow_groups }}"
+
+- name: Restrict SSH access to specific user group.
+  # TODO: Eventually, templatize this for more control, as `sshd`
+  #       stops applying options at the first directive found.
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^AllowGroups "
+    line: "AllowGroups {{ sshd_allow_groups | join(' ') }}"
+    state: present
+
+- name: Include OS-specific hardening tasks.
+  when: ansible_os_family is defined
+  include_tasks: "harden-{{ ansible_os_family | lower }}.yml"

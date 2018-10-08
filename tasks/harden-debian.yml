@@ -1,3 +1,4 @@
+---
 # Tasks for hardening the base of a Debian-dervied OS host.
 
 - name: Install base hardening packages.
@@ -10,6 +11,7 @@
       - iptables-persistent
 
 - name: Configure iptables firewall rules.
+  register: configure_iptables
   template:
     src: "templates/iptables.{{ item }}"
     dest: "/etc/iptables/{{ item }}"
@@ -18,7 +20,11 @@
     - rules.v6
 
 - name: Apply new firewall configuration.
+  when: configure_iptables is changed
   command: "{{ item }}"
   loop:
     - "iptables-restore /etc/iptables/rules.v4"
     - "ip6tables-restore /etc/iptables/rules.v6"
+
+- name: Include Raspbian-specific hardening tasks.
+  include_tasks: "harden-raspbian.yml"

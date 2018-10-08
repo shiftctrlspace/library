@@ -19,7 +19,7 @@
     ssh_key_file: ".ssh/{{ calibre_server_username }}_librarian_ed25519"
     #ssh_key_passphrase: "{{ calibre_user_ssh_key_passphrase }}"
 
-- name: Fetch the Calibre user's SSH private key for future management use.
+- name: Fetch the Calibre user's SSH keys for future management use.
   fetch:
     dest: "~/.ssh/"
     src: "{{ item }}"

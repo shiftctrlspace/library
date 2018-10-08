@@ -13,21 +13,9 @@
 
     - name: Run common tasks.
       include_tasks: "tasks/common.yml"
-    - name: Include OS-specific tasks.
-      include_tasks: "tasks/common-{{ ansible_os_family | lower }}.yml"
-    - name: Include Raspbian-specific tasks.
-      include_tasks: "tasks/common-raspbian.yml"
-      when: raspbian # Raspbian is not exactly Debian.
-
     - name: Run hardening tasks.
       when: hardened_hosts
-      block:
-        - name: Run common hardening tasks.
-          include_tasks: "tasks/harden.yml"
-        - name: Include OS-specific hardening tasks.
-          include_tasks: "tasks/harden-{{ ansible_os_family | lower }}.yml"
-        - name: Include Raspbian-specific hardening tasks.
-          include_tasks: "tasks/harden-raspbian.yml"
+      include_tasks: "tasks/harden.yml"
 
   roles:
     - role: tor
