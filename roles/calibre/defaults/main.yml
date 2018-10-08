@@ -1,5 +1,23 @@
+# Default variables for the Calibre content server.
+
+# The OS system user account name to use for the content server.
 calibre_server_username: calibre
+
+# The system user account's home directory. It's probably a good idea
+# to set this to a sensible location in the filesystem hierarchy.
+# Consult the Filesystem Hierarchy Standard (FHS) for details about
+# where system administrators will expect to find content of a certain
+# kind: https://en.wikipedia.org/wiki/Filesystem_Hierarchy_Standard
 calibre_server_home_dir: "/srv/{{ calibre_server_username }}"
-calibre_server_user_additional_groups: ssh
-calibre_server_library_dir: "{{ calibre_server_home_dir }}/{{ 'Neighborhood Library' | replace(' ', '\\x20') }}"
-calibre_server_listen_port: 8080
+
+# List of additional user groups to add the Calibre server account to.
+calibre_server_user_groups: []
+
+# Define your Calibre Library folders, and their associated server(s).
+calibre_libraries:
+
+  library:
+    library_dir: "{{ calibre_server_home_dir }}/Library"
+    listen_port: 8080
+    # TODO: This would be a nice thing.
+    #onions_only: false # Whether Tor is required to see content.

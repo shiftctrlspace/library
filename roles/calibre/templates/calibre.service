@@ -2,28 +2,24 @@
 #
 # Calibre "Digital Library" boot-time startup script.
 #
-# This script is a systemd service unit that ensures
-# the calibre Web server is operational after Tor starts.
-# Without this process running, the digital library is
-# not available over a Web connection. Tor handles all
-# other parts of the network connection and connectivity.
-#
+# This script is a systemd service unit that ensures the Calibre Web
+# server is operational. Without this process running, the digital
+# library is not available over a Web (HTTP) connection.
 [Unit]
 Description=Calibre eBook Management suite Web server
-# Uncomment this to ensure that the Calibre server starts after Tor.
-#After=tor.service
 
 [Service]
 User={{ calibre_server_username }}
 Group=nogroup
 UMask=0005
 Type=forking
+{# TODO: Should this become a systemd template so more than one server can run…? #}
 RuntimeDirectory={{ calibre_server_username }}
 PIDFile=/var/run/{{ calibre_server_username }}/calibre-server.pid
 # Place other configuration options, if desired, in the invocation. For example:
 #     --url-prefix=library --port=8888
 # The escape sequence `\x20` is interpreted by systemd as a literal space character.
-ExecStart=/usr/bin/calibre-server --daemonize --pidfile=/var/run/calibre/calibre-server.pid --with-library={{ calibre_server_library_dir }} --port={{ calibre_server_listen_port }}
+ExecStart=/usr/bin/calibre-server --daemonize --pidfile=/var/run/{{ calibre_server_username }}/calibre-server.pid --with-library={{ item.value['library_dir'] | replace(' ', '\\x20') }} --port={{ item.value['listen_port'] }}
 ExecStop=/bin/kill $(cat /var/run/{{ calibre_server_username }}/calibre-server.pid)
 Restart=on-failure
 # Extra security precautions
@@ -39,6 +35,7 @@ ProtectKernelModules=true
 ProtectKernelTunables=true
 ProtectSystem=full
 LockPersonality=true
+# Do we really need AF_UNIX capabilities?
 RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
 RestrictRealtime=true
 

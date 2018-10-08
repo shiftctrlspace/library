@@ -2,7 +2,6 @@
 
 - name: Install Calibre package.
   apt:
-    force_apt_get: yes
     name: calibre
     state: latest
 
@@ -12,29 +11,29 @@
     state: present
     system: yes
     home: "{{ calibre_server_home_dir }}"
-    groups: "{{ calibre_server_user_additional_groups }}"
+    groups: "{{ calibre_server_user_groups }}"
     shell: "/bin/sh"
     generate_ssh_key: yes
     ssh_key_type: ed25519
     ssh_key_comment: "Librarian"
     ssh_key_file: ".ssh/{{ calibre_server_username }}_librarian_ed25519"
-
-- name: Set ownership on Calibre user's home directory.
-  file:
-    path: "{{ calibre_server_home_dir }}"
-    owner: "{{ calibre_server_username }}"
-    group: "{{ calibre_server_username }}"
+    #ssh_key_passphrase: "{{ calibre_user_ssh_key_passphrase }}"
 
 - name: Fetch the Calibre user's SSH private key for future management use.
   fetch:
     dest: "~/.ssh/ansible-controller/"
-    src: "{{ calibre_server_home_dir }}/.ssh/{{ calibre_server_username }}_librarian_ed25519"
+    src: "{{ item }}"
+  loop:
+    - "{{ calibre_server_home_dir }}/.ssh/{{ calibre_server_username }}_librarian_ed25519"
+    - "{{ calibre_server_home_dir }}/.ssh/{{ calibre_server_username }}_librarian_ed25519.pub"
 
-- name: Set up Calibre user's SSH authorized keys.
-  copy:
-    dest: "{{ calibre_server_home_dir }}/.ssh/authorized_keys"
-    src: "{{ calibre_server_home_dir }}/.ssh/{{ calibre_server_username }}_librarian_ed25519.pub"
-    remote_src: yes
+- name: Authorize Calibre user's newly generated SSH key.
+  authorized_key:
+    key: "{{ lookup('file', lookup('vars', 'public_key_file')) }}"
+    state: present
+    user: "{{ calibre_server_username }}"
+  vars:
+    public_key_file: "~/.ssh/ansible-controller/{{ inventory_hostname }}/{{ calibre_server_home_dir }}/.ssh/{{ calibre_server_username }}_librarian_ed25519.pub"
 
 - name: Install logrotate configuration for Calibre.
   template:
@@ -43,20 +42,16 @@
     # TODO: Can we validate? `logrotate(8)` has the `-d` switch, but…?
 
 - name: Install Calibre systemd service unit file.
-  register: install_calibre_systemd_service
   template:
     src: calibre.service
     dest: /etc/systemd/system/calibre.service
     # TODO: Can we get validation to work?
     #validate: "systemd-analyze verify %s"
-
-- name: Reload systemd daemon.
-  when: install_calibre_systemd_service is changed
-  systemd:
-    daemon_reload: yes
+  loop: "{{ calibre_libraries | dict2items }}"
 
 - name: Start Calibre content server via systemd.
   systemd:
+    daemon_reload: yes
     name: calibre
     enabled: yes
     state: started

@@ -16,7 +16,6 @@
   apt:
     name: "{{ unnecessary_packages['common'] }}"
     state: absent
-    force_apt_get: yes
     autoremove: yes
     purge: yes
 
@@ -25,6 +24,5 @@
   apt:
     name: "{{ unnecessary_packages['debian'] }}"
     state: absent
-    force_apt_get: yes
     autoremove: yes
     purge: yes

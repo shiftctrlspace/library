@@ -1,20 +1,17 @@
 ---
-# Main variable file.
-#
-# Feel free to customize this file to your liking. It is commented
-# thoroughly in the hope that you can tweak it for any environment.
+# Playbook variables.
 
-# By default, we assume that the managed hosts will be dedicated to
+# By default, we assume that the managed hosts are wholly dedicated to
 # serving content from the Calibre server. To ensure that the most
-# resources are used for the library software, we flag that we'll
-# be removing unnecessary pacakges in order to free up more space.
+# resources are used for the library software, we flag that we'll be
+# removing unnecessary pacakges in order to free up more space.
 #
-# See the `unnecessary_packages` variable for a list of package
-# names that will be removed.
+# See the `unnecessary_packages` variable for a list of package names
+# that will be removed.
 uninstall_unnecessary_packages: true
 
-# Lists of packages deemed safe to remove, assuming what is desired
-# is a headless server.
+# Lists of packages deemed safe to remove, assuming what is desired is
+# a headless server.
 unnecessary_packages:
   # Package names that are the same regardless of the underlying OS.
   common:
@@ -53,7 +50,7 @@ unnecessary_packages:
     - "desktop-file-utils"
     - "epiphany-browser"
     - "esound*"
-    - "exim*"
+    - "exim4*"
     - "fonts*"
     - "galculator"
     - "gnome-*"
@@ -111,3 +108,12 @@ onion_services:
     clients:
       - alice
       - bob
+
+# Add the Calibre server user to these additional user groups.
+calibre_server_user_groups:
+  - ssh
+
+calibre_libraries:
+  library:
+    library_dir: "{{ calibre_server_home_dir }}/Neighborhood Library"
+    listen_port: 8080
