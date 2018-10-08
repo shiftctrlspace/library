@@ -21,7 +21,7 @@
 
 - name: Fetch the Calibre user's SSH private key for future management use.
   fetch:
-    dest: "~/.ssh/ansible-controller/"
+    dest: "~/.ssh/"
     src: "{{ item }}"
   loop:
     - "{{ calibre_server_home_dir }}/.ssh/{{ calibre_server_username }}_librarian_ed25519"
@@ -33,7 +33,7 @@
     state: present
     user: "{{ calibre_server_username }}"
   vars:
-    public_key_file: "~/.ssh/ansible-controller/{{ inventory_hostname }}/{{ calibre_server_home_dir }}/.ssh/{{ calibre_server_username }}_librarian_ed25519.pub"
+    public_key_file: "~/.ssh/{{ inventory_hostname }}/{{ calibre_server_home_dir }}/.ssh/{{ calibre_server_username }}_librarian_ed25519.pub"
 
 - name: Install logrotate configuration for Calibre.
   template:

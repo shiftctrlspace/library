@@ -58,13 +58,18 @@ Continuing the library metaphor, we call these stealth Onion authentication cred
 
 ## Adding, removing, and editing the metadata of books
 
-Once provisioned, each host will have a system user with which you can manage your library. The [`calibre` role](roles/calibre/) will generate an Ed25519 SSH key for doing so. This key will be placed in your user's `~/.ssh/ansible-controller/` directory on the Ansible controller. You can then use this key to log in to the Calibre server's host machine with a command such as:
+Once provisioned, each host will have a system user with which you can manage your library. The [`calibre` role](roles/calibre/) will generate an Ed25519 SSH key for doing so. This key will be placed in your user's `~/.ssh/` directory on the Ansible controller. You can then use this key to log in to the Calibre server's host machine with a command such as:
 
 ```sh
-ssh -i ~/.ssh/ansible-controller/"$HOST"/"$CALIBRE_HOME"/.ssh/"$CALIBRE_USER"_librarian_ed25519 calibre@"$HOST"
+ssh -i ~/.ssh/"$HOST"/"$CALIBRE_HOME"/.ssh/"$CALIBRE_USER"_librarian_ed25519 "$CALIBRE_USER"@"$HOST"
 ```
 
-We recommend adding books to the library by synchronizing a second copy of your content on a workstation (such as your laptop) using `rsync(1)`.
+We recommend adding books to the library by synchronizing a second copy of your content on a workstation (such as your laptop) using `rsync(1)`. For example:
 
+```sh
+rsync -zrvthP --delete -e "ssh -i ~/.ssh/${HOST}/${CALIBRE_HOME}/.ssh/${CALIBRE_USER}_librarian_ed25519" /path/to/local/library/ "$CALIBRE_USER"@"$HOST":"$CALIBRE_LIBRARY_DIR"
+```
+
+> :construction: TODO: Write a separate playbook for handling content so that Library management can be performed using Ansible, as well.
+>
 > :construction: TK-TODO: Finish describing how to add Library content.
-> :construction: TK-TODO: Write instructions for dealing with content.
