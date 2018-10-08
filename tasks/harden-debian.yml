@@ -1,6 +1,5 @@
 # Tasks for hardening the base of a Debian-dervied OS host.
 
-# TODO: Extract what can be generalized here to RedHat-based systems.
 - name: Install base hardening packages.
   apt:
     update_cache: yes
@@ -8,3 +7,18 @@
   vars:
     packages:
       - iptables
+      - iptables-persistent
+
+- name: Configure iptables firewall rules.
+  template:
+    src: "templates/iptables.{{ item }}"
+    dest: "/etc/iptables/{{ item }}"
+  loop:
+    - rules.v4
+    - rules.v6
+
+- name: Apply new firewall configuration.
+  command: "{{ item }}"
+  loop:
+    - "iptables-restore /etc/iptables/rules.v4"
+    - "ip6tables-restore /etc/iptables/rules.v6"

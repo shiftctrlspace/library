@@ -1,0 +1,11 @@
+*filter
+:INPUT DROP [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [85:7530]
+-A INPUT -i lo -j ACCEPT
+-A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -p udp -m udp --dport 5353 -j ACCEPT
+{# TODO: If we have multiple Calibre servers, open each one's port. #}
+-A INPUT -p tcp -m tcp --dport {{ calibre_libraries.library.listen_port }} -j ACCEPT
+-A INPUT -p tcp -m tcp --dport 22 -j ACCEPT
+COMMIT

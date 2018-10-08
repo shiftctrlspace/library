@@ -23,7 +23,6 @@ unnecessary_packages:
     - "wolframscript"
 
   debian:
-    - "adwaita-icon-theme"
     - "alacarte"
     - "ant"
     - "aptitude*"
@@ -51,16 +50,12 @@ unnecessary_packages:
     - "epiphany-browser"
     - "esound*"
     - "exim4*"
-    - "fonts*"
     - "galculator"
     - "gnome-*"
     - "greenfoot"
-    - "gstreamer*"
     - "gtk2*"
-    - "imagemagick*"
     - "jackd*"
     - "*javascript*"
-    - "libgtk*"
     - "*lightdm*"
     - "lx*"
     - "*lxde*"
@@ -69,11 +64,14 @@ unnecessary_packages:
     - "pipanel"
     - "scratch"
     - "sonic-pi"
-    - "*x11*"
     - "xserver*"
 
   # TODO:
   redhat:
+
+# By default we'll assume that libraries should have security-hardened
+# configurations. Set this to `false` if you prefer to skip hardening.
+hardened_hosts: true
 
 # Whether or not to install a Tor server and to provision any Onion
 # services on the managed host.
@@ -111,7 +109,7 @@ onion_services:
 
 # Add the Calibre server user to these additional user groups.
 calibre_server_user_groups:
-  - ssh
+  - ssh-user
 
 calibre_libraries:
   library:
