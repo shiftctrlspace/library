@@ -11,9 +11,9 @@
 # foundation and have enabled the SSH server, you'll be able to use
 # this inventory by invoking the following command:
 #
-#     ansible-playbook -i hosts.example -u pi --ask-pass library.yml
+#     ansible-playbook -i hosts.example --ask-pass provision.yml
 #
 # Otherwise, you should modify this inventory file as described in the
 # Ansible documentation, linked above.
 
-raspberry.local # Raspbian OS gives itself this domain name by default.
+raspberry.local remote_user=pi # Raspbian OS uses these by default.

@@ -1,2 +1,2 @@
-hosts
+inventories/prod
 *.retry
