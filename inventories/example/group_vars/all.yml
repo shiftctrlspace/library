@@ -1,17 +1,17 @@
 ---
-# Playbook variables.
+# Example default configuration for Library nodes (by group).
 
-# By default, we assume that the managed hosts are wholly dedicated to
+# If you want you can assume the managed hosts are wholly dedicated to
 # serving content from the Calibre server. To ensure that the most
-# resources are used for the library software, we flag that we'll be
-# removing unnecessary pacakges in order to free up more space.
+# resources are used for the library software, flag that we'll remove
+# unnecessary pacakges in order to free up more disk space.
 #
 # See the `unnecessary_packages` variable for a list of package names
 # that will be removed.
-uninstall_unnecessary_packages: true
+uninstall_unnecessary_packages: false
 
-# Lists of packages deemed safe to remove, assuming what is desired is
-# a headless server.
+# Lists of packages deemed safe to remove, assuming a headless server
+# is desired (i.e., `uninstall_unnecessary_packages` is `true`).
 unnecessary_packages:
   # Package names that are the same regardless of the underlying OS.
   common:
@@ -74,9 +74,8 @@ unnecessary_packages:
 hardened_hosts: true
 
 # When hardening hosts (with `hardened_hosts` set to `true`), we won't
-# allow SSH connections from any user not in one of these groups:
-sshd_allow_groups:
-  - ssh-users
+# allow SSH connections from any user not in this specific user group.
+sshd_allow_group: ssh-users
 
 # Whether or not to install a Tor server and to provision any Onion
 # services on the managed host.
@@ -100,7 +99,7 @@ onion_services:
       - admin
 
   # This Onion service makes the Calibre library available as an
-  # authenticated stealth Onion service.
+  # authenticated stealth Onion service to "alice" and "bob".
   library:
     name: onion-library
     version: 2

@@ -3,10 +3,15 @@
 
 - name: Create SSH users group.
   group:
-    name: "{{ item }}"
+    name: "{{ sshd_allow_group }}"
     state: present
     system: yes
-  loop: "{{ sshd_allow_groups }}"
+
+- name: Add Ansible user to SSH users group.
+  user:
+    name: "{{ ansible_user }}"
+    append: yes
+    groups: "{{ sshd_allow_group }}"
 
 - name: Restrict SSH access to specific user group.
   # TODO: Eventually, templatize this for more control, as `sshd`
@@ -14,8 +19,13 @@
   lineinfile:
     path: /etc/ssh/sshd_config
     regexp: "^AllowGroups "
-    line: "AllowGroups {{ sshd_allow_groups | join(' ') }}"
+    line: "AllowGroups {{ sshd_allow_group }}"
     state: present
+
+- name: Apply hardened SSH configuration.
+  service:
+    name: ssh
+    state: reloaded
 
 - name: Include OS-specific hardening tasks.
   when: ansible_os_family is defined

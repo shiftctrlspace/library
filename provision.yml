@@ -1,16 +1,11 @@
 ---
 # Playbook for deploying a Calibre Library, optionally also exposed
 # as Tor Onion service, that can also be administered by SSH over Tor.
-- name: Deploy Calibre content server and Tor server if requested.
+- name: Provision Library nodes with Dark Web access if requested.
   hosts: all
-  remote_user: pi # Assume a Raspberry Pi running Raspbian by default.
-  become: yes     # We'll need superuser privileges, so, ask for them.
-
-  vars_files:
-    - vars.yml
+  become: yes
 
   pre_tasks:
-
     - name: Run common tasks.
       include_tasks: "tasks/common.yml"
     - name: Run hardening tasks.

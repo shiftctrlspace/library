@@ -8,10 +8,6 @@ That said, to set up your own Library, some initial resources are required. Thes
 * An Internet connection, at least while setting up the Library initially. The cheapest plan from your local Internet Service Provider will almost certainly suffice. If you want to make your Library accessible to people who are not physically nearby (such as connected to the same Wi-Fi network as the Library hardware itself), you will also need to retain an Internet connection so that the Library can function as a remote server. Otherwise, you can simply set up the Library in a location where you have Internet access and then move it to some place you do not; the Library will continue to make its content available to the local area network to which it is connected.
 * Some basic knowledge of command-line GNU/Linux system administration. If this is a new area for you, we highly recommend the NYC chapter of the Anarcho-Tech Collective's "[Foundations](https://github.com/AnarchoTechNYC/meta/wiki/Foundations)" series. In particular, we suggest starting at their "[Securing a Shell Account on a Shared Server](https://github.com/AnarchoTechNYC/meta/blob/master/train-the-trainers/practice-labs/securing-a-shell-account-on-a-shared-server/README.md)" guide if command-line interfaces are completely new to you.
 
-Unless you specify otherwise, the playbooks are written to optimize hosts by removing software often found on most systems, including graphical shells, in order to maximize the amount of available disk and memory space that can be used by the library.
-
-> :warning: It bears repeating: **by default, this project will remove (uninstall) graphical desktop environments as well as other software designed to make most operating systems usable by people who are unfamiliar with command-line system administration.** Please do not use these playbooks unless you are ready to administer a "headless" (command-line only) server.
-
 Once again, we encourage you to acquire the skills you need to manage this Library from the [Anarcho-Tech Collective](https://github.com/AnarchoTechNYC/meta/wiki)'s great guides and [practice labs](https://github.com/AnarchoTechNYC/meta/tree/master/train-the-trainers/practice-labs/). It won't take as long as you might fear, and what you learn will be useful for the rest of your life. Promise.
 
 ## Contents
@@ -45,7 +41,7 @@ To use these playbooks, you need the following software installed on your own co
 
 * [Ansible](https://ansible.com/)
 
-You'll also need the ability to connect via SSH to the machines you list in your [host inventory](hosts.example). Also, of course, those hosts must have sufficient storage space available to hold the contents of the library. (A future version of these playbooks may offer a way to use NAS instead of DAS to store the library content itself.)
+You'll also need the ability to connect via SSH to the machines you list in your [host inventory](https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html). Also, of course, those hosts must have sufficient storage space available to hold the contents of the library. (A future version of these playbooks may offer a way to use NAS instead of DAS to store the library content itself.)
 
 In the simplest case, you can use [NOOBS](https://www.raspberrypi.org/downloads/noobs/) to install [Raspbian](https://www.raspbian.org/) onto a [Raspberry Pi](https://www.raspberrypi.org/). Once the installation is complete, [use Raspbian's included `raspi-config` utility to enable the SSH service](https://www.raspberrypi.org/documentation/remote-access/ssh/), which will make it possible to remotely administer the Pi.
 
@@ -61,37 +57,25 @@ git clone --recursive https://github.com/shiftctrlspace/library.git
 
 ### Deploying a new library branch
 
-Once you are able to remotely administer your host(s) over SSH and have installed a recent-enough version of Ansible (we test with Ansible 2.6.5 and later), the next step is to make a list of the library branches (hosts) you'd like to manage. The [`hosts.example`](hosts.example) provides a start. Copy this file and list the IP addresses or domain names of your library nodes there.
+Once you are able to remotely administer your host(s) over SSH and have installed a recent-enough version of Ansible, the next step is to make a list of the library branches (hosts) you'd like to manage. The files in [`inventories/example`](inventories/example) provide a start. You can copy this directory hierarchy to another folder (such as `inventories/production`) and modify the `hosts` file and any variables in the `group_vars/` folder therein to customize your deployment.
 
-Then you can run the playbook against each library branch node:
-
-```sh
-cp hosts.example inventories/prod # Copy the example inventory to get started.
-vim inventories/prod              # Edit the inventory file to list your library branches.
-
-# Run the playbook against your production inventory.
-ansible-playbook -i inventories/prod provision.yml
-```
-
-The example inventory file assumes an almost untouched Raspbian server. You can use it immediately like this:
+The example inventory file assumes a single, almost untouched Raspbian server. You can use it immediately like this:
 
 ```sh
-ansible-playbook -i hosts.example --ask-pass provision.yml
+ansible-playbook -i inventories/example/hosts --ask-pass provision.yml
 ```
 
-Depending on the speed of your Internet connection and your hardware, the deployment could take quite a bit of time. Moreover, **your graphical shell will be uninstalled to save space** so if you have installed NOOBS or any other desktop environment, be prepared for your screen to black out and to be dropped into a console. If you do not want to uninstall any software, pass `-e uninstall_unnecessary_packages=false` to the deployment command, above.
-
-By default, a successful deployment will expose the (empty) Calibre Library as an authenticated stealth Onion service. You can retrieve the Onion service authentication credentials to a given Library branch (`raspberry.local`) for a given client (`alice`) and then [distribute these credentials to friends, family, or comrades](https://github.com/AnarchoTechNYC/meta/wiki/Connecting-to-an-authenticated-Onion-service):
+Depending on the speed of your Internet connection and your hardware, the deployment could take quite a bit of time. By default, a successful deployment will expose the (empty) Calibre Library as an authenticated stealth Onion service. You can retrieve the Onion service authentication credentials to a given Library branch (such as `raspberry.local`) for a given client (such as `alice`) like this:
 
 ```sh
 # Using Ansible:
-ansible raspberry.local -i hosts.example --ask-pass --become -a "grep 'alice$' /var/lib/tor/onion-services/onion-library/hostname"
+ansible raspberry.local -i inventories/example/hosts --ask-pass --become -a "grep 'alice$' /var/lib/tor/onion-services/onion-library/hostname"
 
 # Using plain old SSH:
 ssh pi@raspberry.local "sudo grep 'alice$' /var/lib/tor/onion-services/onion-library/hostname"
 ```
 
-Continuing the library metaphor, we call these stealth Onion authentication credentials *library cards*.
+Once you have the Onion service authentication cookie for some user (their "library card"), you should securely share it with them so that they may [configure their local Tor](https://github.com/AnarchoTechNYC/meta/wiki/Connecting-to-an-authenticated-Onion-service) to access your Library branch.
 
 ### Adding, removing, and editing the metadata of books
 
@@ -112,6 +96,5 @@ rsync -zrvthP --delete -e "ssh -i ~/.ssh/${HOST}/${CALIBRE_HOME}/.ssh/${CALIBRE_
 > :construction: TK-TODO: Finish describing how to add Library content.
 
 ## Developing
-
 
 > :construction: TK-TODO: Some advice on how to set up a local development environment for this playbook given the above preamble.
