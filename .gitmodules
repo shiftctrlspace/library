@@ -1,3 +1,0 @@
-[submodule "roles/tor"]
-	path = roles/tor
-	url = https://github.com/AnarchoTechNYC/ansible-role-tor

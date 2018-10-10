@@ -31,18 +31,18 @@
   become: no
   local_action:
     module: file
-    path: "~/.ssh/{{ inventory_hostname }}/{{ item.file }}"
+    path: "~/.ssh/{{ inventory_hostname }}/{{ calibre_server_home_dir }}/.ssh/{{ item.file }}"
     mode: "{{ item.mode }}"
     owner: "{{ lookup('env', 'USER') }}"
   loop: "{{ files }}"
   vars:
     files:
       - {
-        file: "{{ calibre_server_home_dir }}/.ssh/{{ calibre_server_username }}_librarian_ed25519",
+        file: "{{ calibre_server_username }}_librarian_ed25519",
         mode: "600"
       }
       - {
-        file: "{{ calibre_server_home_dir }}/.ssh/{{ calibre_server_username }}_librarian_ed25519.pub",
+        file: "{{ calibre_server_username }}_librarian_ed25519.pub",
         mode: "644"
       }
 
@@ -66,7 +66,8 @@
     dest: /etc/systemd/system/calibre.service
     # TODO: Can we get validation to work?
     #validate: "systemd-analyze verify %s"
-  loop: "{{ calibre_libraries | dict2items }}"
+  # TODO: Despite being a loop, this only works with one Library.
+  loop: "{{ calibre_libraries }}"
 
 - name: Start Calibre content server via systemd.
   systemd:

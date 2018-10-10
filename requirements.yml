@@ -1,0 +1,10 @@
+---
+# This file contains references to externally-supplied Ansible roles
+# required for the project.
+
+- name: tor
+  src: https://github.com/AnarchoTechNYC/ansible-role-tor
+  scm: git
+  # The `master` version is the default.
+  #version: master
+

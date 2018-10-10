@@ -14,10 +14,10 @@ calibre_server_home_dir: "/srv/{{ calibre_server_username }}"
 calibre_server_user_groups: []
 
 # Define your Calibre Library folders, and their associated server(s).
+# TODO: Despite being a list this currently only supports one Library.
 calibre_libraries:
 
-  library:
-    library_dir: "{{ calibre_server_home_dir }}/Library"
+  - library_dir: "{{ calibre_server_home_dir }}/Library"
     listen_port: 8080
     # TODO: This would be a nice thing.
     #onions_only: false # Whether Tor is required to see content.

@@ -87,8 +87,7 @@ tor_onion_service_server: true
 onion_services:
 
   # This Onion service is used primarily for NAT punching.
-  ssh:
-    name: onion-ssh # The name of the Onion service directory.
+  - name: onion-ssh # The name of the Onion service directory.
     version: 2      # The Onion service protocol.
     virtport: 22    # The virtual port to expose on the Onion.
     target_addr: 127.0.0.1 # The target address of the service.
@@ -100,8 +99,7 @@ onion_services:
 
   # This Onion service makes the Calibre library available as an
   # authenticated stealth Onion service to "alice" and "bob".
-  library:
-    name: onion-library
+  - name: onion-library
     version: 2
     virtport: 80
     target_addr: 127.0.0.1
@@ -116,6 +114,5 @@ calibre_server_user_groups:
   - ssh-users
 
 calibre_libraries:
-  library:
-    library_dir: "{{ calibre_server_home_dir }}/Neighborhood Library"
+  - library_dir: "{{ calibre_server_home_dir }}/Neighborhood Library"
     listen_port: 8080

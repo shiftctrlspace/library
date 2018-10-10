@@ -8,6 +8,6 @@ This role provides [default variables](defaults/main.yml), which you can overrid
 
 * `calibre_server_username`: The system user name under which the Calibre server will run.
 * `calibre_server_home_dir`: The home directory of the Calibre server's user account.
-* `calibre_server_user_additional_groups`: List or comma-separated string of additional user groups to add the Calibre server user account to.
+* `calibre_server_user_groups`: List of additional user groups to add the Calibre server user account to.
 * `calibre_server_library_dir`: The name of the directory in which to place the Calibre Library. I.e., Calibre's `metadata.db` file will be created here.
 * `calibre_server_listen_port`: The TCP port number to which the Calibre server should bind to.

@@ -45,14 +45,18 @@ You'll also need the ability to connect via SSH to the machines you list in your
 
 In the simplest case, you can use [NOOBS](https://www.raspberrypi.org/downloads/noobs/) to install [Raspbian](https://www.raspbian.org/) onto a [Raspberry Pi](https://www.raspberrypi.org/). Once the installation is complete, [use Raspbian's included `raspi-config` utility to enable the SSH service](https://www.raspberrypi.org/documentation/remote-access/ssh/), which will make it possible to remotely administer the Pi.
 
-### Downloading the project code
+### Installing requirements
 
-> :construction: TK-TODO: Fill this out a bit more. We should consider also using Ansible requirements instead of Git submodules directly so that people only ever have to install Ansible.
-
-Some components are included as [Git submodules](https://git-scm.com/book/en/Git-Tools-Submodules), so use [`git clone --recursive`](http://explainshell.com/explain?cmd=git+clone+--recursive) to download all the dependent roles:
+After you have downloaded this project's code, you will need to retrieve its dependencies. Install them with `ansible-galaxy`:
 
 ```sh
-git clone --recursive https://github.com/shiftctrlspace/library.git
+ansible-galaxy install -r requirements.yml
+```
+
+Or, if you prefer to keep the project's dependent roles inside the project folder:
+
+```sh
+ansible-galaxy install --roles-path roles/ -r requirements.yml
 ```
 
 ### Deploying a new library branch
