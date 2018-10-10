@@ -1,0 +1,24 @@
+---
+# Playbook for populating a Library with content from a sync source.
+- name: Send books to Libraries.
+  hosts: all
+
+  roles:
+    - name: calibre
+      become: yes
+
+  tasks:
+    - name: "Synchronize Libraries."
+      synchronize:
+        src: "{{ item.sync_source }}"
+        dest: "'{{ item.library_dir }}'" # Quote to escape spaces.
+        archive: no
+        recursive: yes
+        delete: yes
+        partial: yes
+        private_key: "~/.ssh/{{ inventory_hostname }}/{{ calibre_server_home_dir }}/.ssh/{{ calibre_server_username }}_librarian_ed25519"
+        set_remote_user: no
+        # This is undocumented on the module page but is described on
+        # the `ansible.cfg` config file documentation.
+        ssh_args: "-l {{ calibre_server_username }}"
+      loop: "{{ calibre_libraries }}"

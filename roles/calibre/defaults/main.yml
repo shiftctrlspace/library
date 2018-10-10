@@ -19,5 +19,6 @@ calibre_libraries:
 
   - library_dir: "{{ calibre_server_home_dir }}/Library"
     listen_port: 8080
+    sync_source: "~/Documents/Calibre Library/" # Trailing slash for "contents of."
     # TODO: This would be a nice thing.
     #onions_only: false # Whether Tor is required to see content.

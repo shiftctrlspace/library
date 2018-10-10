@@ -66,7 +66,7 @@ unnecessary_packages:
     - "sonic-pi"
     - "xserver*"
 
-  # TODO:
+  # TODO: List unnecessary packages on RedHat-based OS's.
   redhat:
 
 # By default we'll assume that libraries should have security-hardened
@@ -89,11 +89,12 @@ onion_services:
   # This Onion service is used primarily for NAT punching.
   - name: onion-ssh # The name of the Onion service directory.
     version: 2      # The Onion service protocol.
-    virtport: 22    # The virtual port to expose on the Onion.
-    target_addr: 127.0.0.1 # The target address of the service.
-    target_port: 22        # The target port of the service.
-    auth_type: stealth     # The Onion's authentication type. This
-                           # can be `stealth`, `basic`, or `false`.
+    virtports:      # The virtual port(s) to expose on the Onion.
+      - port_number: 22        # The Onion's port number itself.
+        target_addr: 127.0.0.1 # The target address of the service.
+        target_port: 22        # The target port of the service.
+    auth_type: stealth         # The Onion's authentication type. This
+                               # can be `stealth`, `basic` or `false`.
     clients:        # A list of clients to authenticate.
       - admin
 
@@ -101,9 +102,10 @@ onion_services:
   # authenticated stealth Onion service to "alice" and "bob".
   - name: onion-library
     version: 2
-    virtport: 80
-    target_addr: 127.0.0.1
-    target_port: 8080
+    virtports:
+      - port_number: 80
+        target_addr: 127.0.0.1
+        target_port: 8080
     auth_type: stealth
     clients:
       - alice
@@ -116,3 +118,4 @@ calibre_server_user_groups:
 calibre_libraries:
   - library_dir: "{{ calibre_server_home_dir }}/Neighborhood Library"
     listen_port: 8080
+    sync_source: "~/Documents/Calibre Library/" # Trailing slash for "contents of."

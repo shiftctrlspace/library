@@ -89,15 +89,11 @@ Once provisioned, each host will have a system user with which you can manage yo
 ssh -i ~/.ssh/"$HOST"/"$CALIBRE_HOME"/.ssh/"$CALIBRE_USER"_librarian_ed25519 "$CALIBRE_USER"@"$HOST"
 ```
 
-We recommend adding books to the library by synchronizing a second copy of your content on a workstation (such as your laptop) using `rsync(1)`. For example:
+We recommend adding books to the library by synchronizing a second copy of your content on a workstation (such as your laptop). You can use plain old `rsync(1)` for this, although you will find the included [`synchronize.yml`](synchronize.yml) playbook easier to use. To synchronize the library branches with your master copies:
 
 ```sh
-rsync -zrvthP --delete -e "ssh -i ~/.ssh/${HOST}/${CALIBRE_HOME}/.ssh/${CALIBRE_USER}_librarian_ed25519" /path/to/local/library/ "$CALIBRE_USER"@"$HOST":"$CALIBRE_LIBRARY_DIR"
+ansible-playbook -i inventories/example/hosts synchronize.yml
 ```
-
-> :construction: TODO: Write a separate playbook for handling content so that Library management can be performed using Ansible, as well.
->
-> :construction: TK-TODO: Finish describing how to add Library content.
 
 ## Developing
 
