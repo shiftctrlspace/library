@@ -26,6 +26,7 @@
   service:
     name: ssh
     state: reloaded
+  changed_when: false
 
 - name: Include OS-specific hardening tasks.
   when: ansible_os_family is defined

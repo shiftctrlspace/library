@@ -8,3 +8,6 @@
   # The `master` version is the default.
   #version: master
 
+- name: calibre
+  src: https://github.com/shiftctrlspace/ansible-role-calibre
+  scm: git
