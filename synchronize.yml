@@ -8,7 +8,7 @@
       become: yes
 
   tasks:
-    - name: "Synchronize Libraries."
+    - name: Synchronize remote Library with local copy.
       synchronize:
         src: "{{ item.sync_source }}"
         dest: "'{{ item.library_dir }}'" # Quote to escape spaces.
@@ -16,7 +16,7 @@
         recursive: yes
         delete: yes
         partial: yes
-        private_key: "~/.ssh/{{ inventory_hostname }}/{{ calibre_server_home_dir }}/.ssh/{{ calibre_server_username }}_librarian_ed25519"
+        private_key: "~/.ssh/{{ inventory_hostname }}{{ calibre_server_home_dir }}/.ssh/{{ calibre_server_username }}_librarian_ed25519"
         set_remote_user: no
         # This is undocumented on the module page but is described on
         # the `ansible.cfg` config file documentation.

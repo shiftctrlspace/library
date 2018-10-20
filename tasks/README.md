@@ -1,6 +1,6 @@
 # Library tasks
 
-This directory contains [Ansible plays ("tasks")](https://docs.ansible.com/ansible/latest/network/getting_started/basic_concepts.html#tasks) that are (more or less) unique to this project. They come in two main groupings:
+This directory contains [Ansible tasks](https://docs.ansible.com/ansible/latest/network/getting_started/basic_concepts.html#tasks) that are (more or less) unique to this project. They come in two main groupings:
 
 * Common tasks.
 

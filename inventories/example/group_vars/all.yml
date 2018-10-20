@@ -138,9 +138,9 @@ onion_services:
 
 # Add the Calibre server user to these additional user groups.
 calibre_server_user_groups:
-  - ssh-users
+  - "{{ sshd_allow_group }}"
 
 calibre_libraries:
-  - library_dir: "{{ calibre_server_home_dir }}/Neighborhood Library"
-    listen_port: 8080
+  - name: main
+    library_dir: "{{ calibre_server_home_dir }}/Calibre Library"
     sync_source: "~/Documents/Calibre Library/" # Trailing slash for "contents of."

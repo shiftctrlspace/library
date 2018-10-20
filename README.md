@@ -8,6 +8,8 @@ That said, to set up your own Library, some initial resources are required. Thes
 * An Internet connection, at least while setting up the Library initially. The cheapest plan from your local Internet Service Provider will almost certainly suffice. If you want to make your Library accessible to people who are not physically nearby (such as connected to the same Wi-Fi network as the Library hardware itself), you will also need to retain an Internet connection so that the Library can function as a remote server. Otherwise, you can simply set up the Library in a location where you have Internet access and then move it to some place you do not; the Library will continue to make its content available to the local area network to which it is connected.
 * Some basic knowledge of command-line GNU/Linux system administration. If this is a new area for you, we highly recommend the NYC chapter of the Anarcho-Tech Collective's "[Foundations](https://github.com/AnarchoTechNYC/meta/wiki/Foundations)" series. In particular, we suggest starting at their "[Securing a Shell Account on a Shared Server](https://github.com/AnarchoTechNYC/meta/blob/master/train-the-trainers/practice-labs/securing-a-shell-account-on-a-shared-server/README.md)" guide if command-line interfaces are completely new to you.
 
+To deploy and manage a Library, this project uses [Ansible playbooks](https://docs.ansible.com/ansible/latest/user_guide/playbooks.html) that provision a simple Web server built into [Calibre](https://calibre-ebook.com/) (its [Content server](https://manual.calibre-ebook.com/generated/en/calibre-server.html)) to a given host or set of hosts. Moreover, by default, the [`provision.yml`](provision.yml) playbook will build a [Tor](https://torproject.org/) server from the Tor Project's GPG-signed source code, and expose the Calibre library as a stealth Onion service to a number of authenticated clients. This means people who want to access the Library from afar will need to use and configure their local Tor clients (such as [Tor Browser](https://www.torproject.org/download/download-easy.html)) with the appropriate access credentials ("library cards") before they are able to connect.
+
 Once again, we encourage you to acquire the skills you need to manage this Library from the [Anarcho-Tech Collective](https://github.com/AnarchoTechNYC/meta/wiki)'s great guides and [practice labs](https://github.com/AnarchoTechNYC/meta/tree/master/train-the-trainers/practice-labs/). It won't take as long as you might fear, and what you learn will be useful for the rest of your life. Promise.
 
 ## Contents
@@ -29,8 +31,6 @@ In order to simplify understanding this project and to make it easier to communi
 * The people responsible for adding, removing, and cataloguing the contents of the library are called *librarians*. A library branch must have at least one librarian, although any number of librarians can share responsibility for a single library branch.
 * People who have been pre-approved by a librarian to access the library's content even while they are not physically near the library itself are given a set of access credentials that we call *library cards*. These are optional; by default, no remote access is permitted without a library card.
 
-To deploy and manage a Library, this project uses [Ansible playbooks](https://docs.ansible.com/ansible/latest/user_guide/playbooks.html) that provisions a simple [Calibre](https://calibre-ebook.com/) Web server to a given host (or set of hosts). Moreover, by default, the provisioning scripts will build a [Tor](https://torproject.org/) server from the Tor Project's GPG-signed source code, and expose the Calibre library as a stealth Onion service to a list of authenticated clients. This means people who want to access the Library from afar will need to use and configure their local Tor clients (such as [Tor Browser](https://www.torproject.org/download/download-easy.html)) with the appropriate access credentials ("library cards")  before they are able to connect.
-
 ## Set up a new Library
 
 This section describes the process of setting up a new Library branch in the default configuration.
@@ -43,7 +43,7 @@ To use these playbooks, you need the following software installed on your own co
 
 You'll also need the ability to connect via SSH to the machines you list in your [host inventory](https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html). Also, of course, those hosts must have sufficient storage space available to hold the contents of the library. (A future version of these playbooks may offer a way to use NAS instead of DAS to store the library content itself.)
 
-In the simplest case, you can use [NOOBS](https://www.raspberrypi.org/downloads/noobs/) to install [Raspbian](https://www.raspbian.org/) onto a [Raspberry Pi](https://www.raspberrypi.org/). Once the installation is complete, [use Raspbian's included `raspi-config` utility to enable the SSH service](https://www.raspberrypi.org/documentation/remote-access/ssh/), which will make it possible to remotely administer the Pi.
+In the simplest case, you can use [NOOBS](https://www.raspberrypi.org/documentation/installation/noobs.md) to install [Raspbian](https://www.raspbian.org/) onto a [Raspberry Pi](https://www.raspberrypi.org/). Once the installation is complete, [use Raspbian's included `raspi-config` utility to enable the SSH service](https://www.raspberrypi.org/documentation/remote-access/ssh/), which will make it possible to remotely administer the Pi. You will then be able to use this project's provided [`example/hosts` inventory file](inventories/example/hosts) to experiment with the playbooks unmodified.
 
 ### Installing requirements
 
@@ -69,6 +69,8 @@ The example inventory file assumes a single, almost untouched Raspbian server. Y
 ansible-playbook -i inventories/example/hosts --ask-pass provision.yml
 ```
 
+> :beginner: The default password for the default `pi` user on a Raspbian system is `raspberry`. You should change this on all production systems.
+
 Depending on the speed of your Internet connection and your hardware, the deployment could take quite a bit of time. By default, a successful deployment will expose the (empty) Calibre Library as an authenticated stealth Onion service. You can retrieve the Onion service authentication credentials to a given Library branch (such as `raspberry.local`) for a given client (such as `alice`) like this:
 
 ```sh
@@ -83,17 +85,19 @@ Once you have the Onion service authentication cookie for some user (their "libr
 
 ### Adding, removing, and editing the metadata of books
 
-Once provisioned, each host will have a system user with which you can manage your library. The [`calibre` role](roles/calibre/) will generate an Ed25519 SSH key for doing so. This key will be placed in your user's `~/.ssh/` directory on the Ansible controller. You can then use this key to log in to the Calibre server's host machine with a command such as:
+Once provisioned, each host will have a system user with which you can manage your library. The required [`calibre` role](https://github.com/shiftctrlspace/ansible-role-calibre/#readme) will generate an Ed25519 SSH key for doing so. This key will be placed in your user's `$HOME/.ssh/` directory on the Ansible controller. You can then use this key to log in to the Calibre server's host machine with a command such as:
 
 ```sh
-ssh -i ~/.ssh/"$HOST"/"$CALIBRE_HOME"/.ssh/"$CALIBRE_USER"_librarian_ed25519 "$CALIBRE_USER"@"$HOST"
+ssh -i ~/.ssh/raspberry.local/srv/calibre/.ssh/calibre_librarian_ed25519 calibre@raspberry.local
 ```
 
-We recommend adding books to the library by synchronizing a second copy of your content on a workstation (such as your laptop). You can use plain old `rsync(1)` for this, although you will find the included [`synchronize.yml`](synchronize.yml) playbook easier to use. To synchronize the library branches with your master copies:
+We recommend adding books to library branches by synchronizing them with a master copy of your content located on a workstation (such as your laptop). The example inventory expects to find this library on your Ansible controller in the `~/Documents/Calibre Library` folder. You can use plain old [rsync](https://rsync.samba.org/) to perform the synchronization, although you will find the included [`synchronize.yml`](synchronize.yml) playbook easier to use. To synchronize the remote library branches with your local library copy:
 
 ```sh
 ansible-playbook -i inventories/example/hosts synchronize.yml
 ```
+
+Whenever you make a change to your local library from within the Calibre GUI, simply run the above `synchronize.yml` playbook again. This will first (re-)confirm the condition of the Calibre Content server on the remote library branches, and then send any changes you made to them.
 
 ## Developing
 
