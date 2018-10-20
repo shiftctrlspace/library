@@ -6,7 +6,7 @@
 -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
 -A INPUT -p udp -m udp --dport 5353 -j ACCEPT
 {% for library in calibre_libraries %}
--A INPUT -p tcp -m tcp --dport {{ library.listen_port }} -j ACCEPT
+-A INPUT -p tcp -m tcp --dport {{ library.listen_port | default(8080) }} -j ACCEPT
 {% endfor %}
 -A INPUT -p tcp -m tcp --dport 22 -j ACCEPT
 COMMIT

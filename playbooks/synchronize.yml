@@ -3,10 +3,6 @@
 - name: Send books to Libraries.
   hosts: all
 
-  roles:
-    - name: calibre
-      become: yes
-
   tasks:
     - name: Synchronize remote Library with local copy.
       synchronize:
