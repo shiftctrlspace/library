@@ -142,6 +142,13 @@ calibre_server_home_dir: "/srv/{{ calibre_server_username }}"
 calibre_server_user_groups:
   - "{{ sshd_allow_group }}"
 
+# If you have a custom Calibre Content server template, provide the
+# name of its containing folder here.
+#
+# To use the example CalibreBootstrap alternate theme, you must first
+# also initialize its submodule: `git submodule update --init`
+#calibre_server_resources_files: CalibreBootstrap
+
 calibre_libraries:
   - name: main
     library_dir: "{{ calibre_server_home_dir }}/Calibre Library"

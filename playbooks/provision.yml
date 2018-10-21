@@ -16,3 +16,13 @@
     - role: tor
       when: tor_onion_service_server
     - calibre
+
+  tasks:
+    - name: Install Calibre Content server resources.
+      when: calibre_server_resources_files is defined and
+            calibre_server_resources_files
+      copy:
+        src: "{{ calibre_server_resources_files }}/content_server"
+        dest: "{{ calibre_server_home_dir }}/.config/calibre/resources/"
+        owner: "{{ calibre_server_username }}"
+      notify: Restart Calibre.

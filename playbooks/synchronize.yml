@@ -2,6 +2,7 @@
 # Playbook for populating a Library with content from a sync source.
 - name: Send books to Libraries.
   hosts: all
+  gather_facts: no
 
   tasks:
     - name: Synchronize remote Library with local copy.

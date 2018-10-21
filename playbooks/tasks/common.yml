@@ -7,4 +7,4 @@
 
 - name: Include OS-specific tasks.
   when: ansible_os_family is defined
-  include_tasks: "common-{{ ansible_os_family | lower }}.yml"
+  include_tasks: "common-{{ ansible_os_family | default('Debian') | lower }}.yml"

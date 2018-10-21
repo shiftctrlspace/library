@@ -30,4 +30,4 @@
 
 - name: Include OS-specific hardening tasks.
   when: ansible_os_family is defined
-  include_tasks: "harden-{{ ansible_os_family | lower }}.yml"
+  include_tasks: "harden-{{ ansible_os_family | default('Debian') | lower }}.yml"
