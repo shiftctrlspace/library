@@ -1,3 +1,6 @@
 [submodule "playbooks/files/CalibreBootstrap"]
 	path = playbooks/files/CalibreBootstrap
 	url = https://github.com/sudiphed/CalibreBootstrap.git
+[submodule "playbooks/files/shiftctrl.local/var/www/html"]
+	path = playbooks/files/shiftctrl.local/var/www/html
+	url = https://github.com/shiftctrlspace/shiftctrl.local.git

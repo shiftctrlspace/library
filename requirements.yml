@@ -8,6 +8,10 @@
   # The `master` version is the default.
   #version: master
 
+- name: lighttpd
+  src: https://github.com/AnarchoTechNYC/ansible-role-lighttpd
+  scm: git
+
 - name: calibre
   src: https://github.com/shiftctrlspace/ansible-role-calibre
   scm: git

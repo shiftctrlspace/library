@@ -127,6 +127,9 @@ onion_services:
       - alice
       - bob
 
+# Landing page variables.
+web_landing_page_resources_dir: "all/public_html"
+
 # Calibre server variables.
 calibre_server_username: calibre
 calibre_server_home_dir: "/srv/{{ calibre_server_username }}"

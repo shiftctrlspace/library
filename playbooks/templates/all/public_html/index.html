@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ ansible_hostname }} local resources</title>
+</head>
+<body>
+    <h1>Welcome to the {{ ansible_hostname }} local resource center</h1>
+    {% if calibre_libraries is defined %}
+    <p>Libraries available:</p>
+    <ul>
+        {% for library in calibre_libraries %}
+        <li><a href="//<!--#echo var="HTTP_HOST" -->:{{ library.listen_port | default(8080) }}/">{{ library.name }} Library</a></li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</body>
+</html>

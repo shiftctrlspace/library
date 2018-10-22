@@ -4,6 +4,7 @@
 - name: Provision Library nodes with Dark Web access if requested.
   hosts: all
   become: yes
+  force_handlers: yes
 
   pre_tasks:
     - name: Run common tasks.
@@ -16,6 +17,7 @@
     - role: tor
       when: tor_onion_service_server
     - calibre
+    - lighttpd
 
   tasks:
     - name: Install Calibre Content server resources.
@@ -26,3 +28,26 @@
         dest: "{{ calibre_server_home_dir }}/.config/calibre/resources/"
         owner: "{{ calibre_server_username }}"
       notify: Restart Calibre.
+
+    - name: Install Web landing page files.
+      synchronize:
+        src: "files/{{ web_landing_page_resources_dir }}/"
+        dest: /var/www/html/
+        recursive: yes
+        rsync_opts:
+          - "--exclude=.git"
+      ignore_errors: true # It's possible we have no files to copy. :)
+
+    - name: Ensure Web landing page directory structure exists.
+      when: item.state == "directory"
+      file:
+        path: "/var/www/html/{{ item.path }}"
+        state: directory
+      with_filetree: "templates/{{ web_landing_page_resources_dir }}"
+
+    - name: Write Web landing page templates.
+      when: item.state == "file"
+      template:
+        src: "{{ item.src }}"
+        dest: "/var/www/html/{{ item.path }}"
+      with_filetree: "templates/{{ web_landing_page_resources_dir }}"
