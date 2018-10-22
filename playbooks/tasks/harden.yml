@@ -9,7 +9,7 @@
 
 - name: Add Ansible user to SSH users group.
   user:
-    name: "{{ ansible_user }}"
+    name: "{{ ansible_user_id }}"
     append: yes
     groups: "{{ sshd_allow_group }}"
 
