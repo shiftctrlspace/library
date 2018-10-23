@@ -52,7 +52,7 @@ script:
   - container_id=$(mktemp)
 
   - >
-    sudo docker run --detach --privileged
+    sudo docker run --detach --privileged -e USER
     --volume /sys/fs/cgroup:/sys/fs/cgroup:ro
     --volume "${PWD}":/tmp/build
     ${distribution}-${version}:ansible > "${container_id}"
