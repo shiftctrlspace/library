@@ -1,28 +1,23 @@
 ---
 # Common tasks for Debian-dervived operating systems.
 
-- name: Uninstall unnecessary common packages.
-  when: uninstall_unnecessary_packages
-  apt:
-    name: "{{ unnecessary_packages['common'] }}"
-    state: absent
-    autoremove: yes
-    purge: yes
+- name: Uninstall unnecessary packages.
+  when: uninstall_unnecessary_packages is defined and
+        uninstall_unnecessary_packages
+  block:
+    - name: Remove packages.
+      apt:
+        name: "{{ unnecessary_packages.common | default([]) + unnecessary_packages.debian | default([]) }}"
+        state: absent
+        autoremove: yes
+        purge: yes
 
-- name: Uninstall unnecessary Debian packages.
-  when: uninstall_unnecessary_packages and ansible_os_family == "Debian"
-  apt:
-    name: "{{ unnecessary_packages['debian'] }}"
-    state: absent
-    autoremove: yes
-    purge: yes
-
-- name: Upgrade remaining packages.
-  apt:
-    force_apt_get: yes
-    update_cache: yes
-    upgrade: yes
-    autoremove: yes
+    - name: Upgrade remaining packages.
+      apt:
+        force_apt_get: yes
+        update_cache: yes
+        upgrade: yes
+        autoremove: yes
 
 - name: Check for Raspbian OS.
   register: rpi_issue

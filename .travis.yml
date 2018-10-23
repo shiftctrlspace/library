@@ -13,7 +13,7 @@ language: python
 # See https://docs.travis-ci.com/user/build-matrix/
 python:
   - "2.7"
-  - "3.7"
+  - "3.6"
 
 # Execute these commands before Travis starts its install phase.
 # See https://docs.travis-ci.com/user/job-lifecycle/#the-job-lifecycle
