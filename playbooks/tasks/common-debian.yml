@@ -31,5 +31,5 @@
   when: rpi_issue.stat.exists
 
 - name: Include Raspbian-specific tasks.
+  when: raspbian is defined and raspbian
   include_tasks: "common-raspbian.yml"
-  when: raspbian # Raspbian is not exactly Debian.

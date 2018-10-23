@@ -10,12 +10,12 @@
     - name: Run common tasks.
       include_tasks: "tasks/common.yml"
     - name: Run hardening tasks.
-      when: hardened_hosts
+      when: hardened_hosts is defined and hardened_hosts
       include_tasks: "tasks/harden.yml"
 
   roles:
     - role: tor
-      when: tor_onion_service_server
+      when: tor_onion_service_server is defined and tor_onion_service_server
     - calibre
     - lighttpd
 
