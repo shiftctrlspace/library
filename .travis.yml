@@ -1,0 +1,52 @@
+# This file provides integration with the Travis-CI.org build service.
+---
+# Use full virtual machine environment on Travis's servers for builds.
+# See https://docs.travis-ci.com/user/tutorial/#selecting-infrastructure-optional
+sudo: enabled
+
+# Have Travis make Python virtual envs in the virtual machine for us.
+# See https://docs.travis-ci.com/user/languages/python/
+language: python
+
+# Test with these Python versions. Listing these results in a matrix,
+# i.e., multiple build, one for each version listed here.
+# See https://docs.travis-ci.com/user/build-matrix/
+python:
+  - "2.7"
+  - "3.7"
+
+# Execute these commands before Travis starts its install phase.
+# See https://docs.travis-ci.com/user/job-lifecycle/#the-job-lifecycle
+before_install:
+  - sudo apt-get update --yes --quiet
+
+# Set up Travis's build environment for our project with these steps.
+install:
+
+  # Install Ansible itself.
+  - pip install ansible
+
+  # Install this project's Ansible role requirements.
+  - ansible-galaxy install -r requirements.yml
+
+# Run these commands in sequence (a "script") to test our project.
+# Each command listed must return an exit code of `0` for the build,
+# in its entirety, to be considered successful. Otherwise, it fails.
+script:
+
+  # Perform a basic syntax check of all loaded Ansible playbook code.
+  - ansible-playbook -i tests/inventory --syntax-check tests/travis.yml
+
+  # Run the test playbook to ensure Ansible completes successfully.
+  - ansible-playbook -i tests/inventory --connection local tests/travis.yml
+
+  # Run the test playbook again to ensure playbook idempotence.
+  - >
+    ansible-playbook -i tests/inventory --connection local tests/travis.yml |
+      grep -q 'changed=0.*failed=0' &&
+        (echo 'Idempotence test: pass' && exit 0) ||
+          (echo 'Idempotence test: fail' && exit 1)
+
+  # Make HTTP requests to ensure the playbook is actually functional.
+  - curl http://localhost/      # Make sure landing page is available.
+  - curl http://localhost:8080/ # Make sure Calibre server is running.

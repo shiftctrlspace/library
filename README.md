@@ -1,4 +1,4 @@
-# Shift-CTRL Space Library
+# Shift-CTRL Space Library [![Build Status](https://travis-ci.org/shiftctrlspace/library.svg?branch=master)](https://travis-ci.org/shiftctrlspace/library)
 
 The Shift-CTRL Space Library project is a self-hosted personal e-Book ([Calibre](https://calibre-ebook.com/)) library "in a box" designed to make it easy to securely share (primarily) texts among small- to medium-sized groups who are tightly resource-constrained. This means we are focused on supporting extremely low-cost, easily-available hardware. It's important to us that small groups or individuals without many resources have what they need to operate effectively despite having at best minimal support from existing economic or political systems.
 
