@@ -1,52 +1,88 @@
 # This file provides integration with the Travis-CI.org build service.
 ---
-# Use full virtual machine environment on Travis's servers for builds.
-# See https://docs.travis-ci.com/user/tutorial/#selecting-infrastructure-optional
-sudo: enabled
+# We want to build in a Docker container in order to access multiple
+# Operating System environments (notably, OS's with systemd), so we
+# request Travis route our build to a Docker-enabled environement.
+# See:
+#     https://docs.travis-ci.com/user/tutorial/#selecting-infrastructure-optional
+#     https://docs.travis-ci.com/user/docker/
+sudo: required
+services:
+  - docker
 
-# Have Travis make Python virtual envs in the virtual machine for us.
-# See https://docs.travis-ci.com/user/languages/python/
-language: python
+# Strictly speaking, we don't really need to set a language as we are
+# building in Docker containers, but it makes the Travis GUI happier.
+# See: https://docs.travis-ci.com/user/languages/minimal-and-generic/
+language: minimal
 
-# Test with these Python versions. Listing these results in a matrix,
-# i.e., multiple build, one for each version listed here.
-# See https://docs.travis-ci.com/user/build-matrix/
-python:
-  - "2.7"
-  - "3.6"
+# We set the following environment variables in order to trigger one
+# build per list item (one build for each OS distribution).
+env:
+  # TODO:
+  #- distribution: centos
+  #  version: 7
+  #- distribution: fedora
+  #  version: 28
+  - distribution: debian
+    version: stretch
+  #- distribution: debian
+  #  version: jessie
+  #- distribution: ubuntu
+  #  version: xenial
+  #- distribution: ubuntu
+  #  version: bionic
 
 # Execute these commands before Travis starts its install phase.
 # See https://docs.travis-ci.com/user/job-lifecycle/#the-job-lifecycle
 before_install:
-  - sudo apt-get update --yes --quiet
+  - sudo docker pull ${distribution}:${version}
+  - >
+    sudo docker build --no-cache --rm
+    --file=tests/Dockerfile.${distribution}-${version}
+    --tag=${distribution}-${version}:ansible tests
 
-# Set up Travis's build environment for our project with these steps.
-install:
-
-  # Install Ansible itself.
-  - pip install ansible
-
-  # Install this project's Ansible role requirements.
-  - ansible-galaxy install -r requirements.yml
+# The install phase of the Travis build is handled by our Dockerfile.
+#install:
 
 # Run these commands in sequence (a "script") to test our project.
 # Each command listed must return an exit code of `0` for the build,
 # in its entirety, to be considered successful. Otherwise, it fails.
 script:
 
+  - container_id=$(mktemp)
+
+  - >
+    sudo docker run --detach --privileged
+    --volume /sys/fs/cgroup:/sys/fs/cgroup:ro
+    --volume "${PWD}":/tmp/build:ro
+    ${distribution}-${version}:ansible > "${container_id}"
+
+  # TODO: Move to before_install?
+  - >
+    sudo docker exec "$(cat ${container_id})"
+    env ANSIBLE_FORCE_COLOR=1 ansible-galaxy install -r /tmp/build/requirements.yml
+
   # Perform a basic syntax check of all loaded Ansible playbook code.
-  - ansible-playbook -i tests/inventory --syntax-check tests/travis.yml
+  - >
+    sudo docker exec "$(cat ${container_id})"
+    env ANSIBLE_FORCE_COLOR=1 ansible-playbook --syntax-check /tmp/build/tests/travis.yml
 
   # Run the test playbook to ensure Ansible completes successfully.
-  - ansible-playbook -i tests/inventory --connection local tests/travis.yml
+  - >
+    sudo docker exec "$(cat ${container_id})"
+    env ANSIBLE_FORCE_COLOR=1 ansible-playbook /tmp/build/tests/travis.yml
 
   # Run the test playbook again to ensure playbook idempotence.
   - >
-    ansible-playbook -i tests/inventory --connection local tests/travis.yml |
-      grep -q 'changed=0.*failed=0' &&
-        (echo 'Idempotence test: pass' && exit 0) ||
-          (echo 'Idempotence test: fail' && exit 1)
+    sudo docker exec "$(cat ${container_id})"
+    env ANSIBLE_FORCE_COLOR=1 ansible-playbook /tmp/build/tests/travis.yml
+    | grep -q 'changed=0.*failed=0'
+    && (echo 'Idempotence test: pass' && exit 0)
+    || (echo 'Idempotence test: fail' && exit 1)
 
+  - sudo docker rm -f "$(cat ${container_id})"
+
+  # TODO:
   # Make HTTP requests to ensure the playbook is actually functional.
-  - curl http://localhost/      # Make sure landing page is available.
-  - curl http://localhost:8080/ # Make sure Calibre server is running.
+  #- curl http://localhost/      # Make sure landing page is available.
+  #- curl http://localhost:8080/ # Make sure Calibre server is running.

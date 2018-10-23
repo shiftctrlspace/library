@@ -1,0 +1,23 @@
+# Use the Debian 9 ("Stretch") container as a base image.
+FROM debian:stretch
+
+# Install essential dependencies for running Ansible and our project.
+RUN apt-get update --yes && apt-get install --yes --no-install-recommends \
+    software-properties-common \
+    build-essential \
+    libffi-dev \
+    libssl-dev \
+    python-dev \
+    python-pip \
+    git \
+    systemd \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Ansible inside the container.
+RUN pip install --upgrade setuptools && pip install ansible
+
+# Create a default Ansible inventory hosts file.
+RUN mkdir -p /etc/ansible && echo "[local]\nlocalhost ansible_connection=local" > /etc/ansible/hosts
+
+# Run systemd when `docker run` is executed.
+ENTRYPOINT ["/bin/systemd"]
