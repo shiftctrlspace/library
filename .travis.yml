@@ -54,7 +54,7 @@ script:
   - >
     sudo docker run --detach --privileged
     --volume /sys/fs/cgroup:/sys/fs/cgroup:ro
-    --volume "${PWD}":/tmp/build:ro
+    --volume "${PWD}":/tmp/build
     ${distribution}-${version}:ansible > "${container_id}"
 
   # TODO: Move to before_install?

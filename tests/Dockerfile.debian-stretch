@@ -9,6 +9,7 @@ RUN apt-get update --yes && apt-get install --yes --no-install-recommends \
     libssl-dev \
     python-dev \
     python-pip \
+    openssh-client \
     git \
     systemd \
     && rm -rf /var/lib/apt/lists/*
