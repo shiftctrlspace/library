@@ -11,6 +11,7 @@ RUN apt-get update --yes && apt-get install --yes --no-install-recommends \
     python-pip \
     openssh-client \
     git \
+    netcat \
     systemd \
     && rm -rf /var/lib/apt/lists/*
 
