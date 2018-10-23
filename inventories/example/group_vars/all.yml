@@ -49,6 +49,8 @@ unnecessary_packages:
     - "lxde"
     - "lxtask"
     - "nano"
+    - "nodejs"
+    - "nodered"
     - "penguinspuzzle"
     - "piclone"
     - "pigpio"
