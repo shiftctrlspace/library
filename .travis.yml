@@ -1,35 +1,32 @@
 # This file provides integration with the Travis-CI.org build service.
 ---
-# We want to build in a Docker container in order to access multiple
-# Operating System environments (notably, OS's with systemd), so we
-# request Travis route our build to a Docker-enabled environement.
-# See:
-#     https://docs.travis-ci.com/user/tutorial/#selecting-infrastructure-optional
-#     https://docs.travis-ci.com/user/docker/
-sudo: required
-services:
-  - docker
-
 # Strictly speaking, we don't really need to set a language as we are
-# building in Docker containers, but it makes the Travis GUI happier.
+# building inside containers, but this speeds build time by requesting
+# a minimal host image (e.g., no need to install stuff we won't use).
 # See: https://docs.travis-ci.com/user/languages/minimal-and-generic/
 language: minimal
 
 # We set the following environment variables in order to trigger one
 # build per list item (one build for each OS distribution).
 env:
-  # TODO:
-  #- distribution: centos
-  #  version: 7
-  #- distribution: fedora
-  #  version: 28
-  - distribution: debian
-    version: stretch
-  # TODO:
-  #- distribution: ubuntu
-  #  version: bionic
-  - distribution: ubuntu
-    version: xenial
+  - distro: debian9
+  - distro: debian8
+  - distro: ubuntu1804
+  - distro: ubuntu1604
+  - distro: centos7
+  - distro: fedora27
+
+# The above `env` list creates what Travis CI calls a build matrix.
+# We can customize the settings for each job in the build matrix by
+# specifying them explicitly. See:
+# https://docs.travis-ci.com/user/customizing-the-build/
+matrix:
+  allow_failures:
+    - env: distro=debian8
+    - env: distro=ubuntu1804
+    - env: distro=ubuntu1604
+    - env: distro=centos7
+    - env: distro=fedora27
 
 # Execute these commands before Travis starts its install phase.
 # See https://docs.travis-ci.com/user/job-lifecycle/#the-job-lifecycle
@@ -37,24 +34,27 @@ env:
 
 # Set up Travis's build environment for our project with these steps.
 install:
-  - sudo docker pull ${distribution}:${version}
-  - >
-    sudo docker build --no-cache --rm
-    --file=tests/Dockerfile.${distribution}-${version}
-    --tag=${distribution}-${version}:ansible tests
+  - docker pull geerlingguy/docker-${distro}-ansible
 
   - container_id=$(mktemp)
 
+  # Run container, passing the USER environment variable manually set
+  # to the root user, since the project looks up the current user.
   - >
-    sudo docker run --detach --privileged -e USER
+    docker run --detach --privileged -e USER=root
     --publish 80:80
     --volume /sys/fs/cgroup:/sys/fs/cgroup:ro
     --volume "${PWD}":/tmp/build
-    ${distribution}-${version}:ansible > "${container_id}"
+    geerlingguy/docker-${distro}-ansible:latest > "${container_id}"
+
+  # Set up the container itself to run our tests.
+  - >
+    docker exec --tty "$(cat ${container_id})" env TERM=xterm
+    ansible-playbook /tmp/build/tests/setup.yml
 
   - >
-    sudo docker exec "$(cat ${container_id})"
-    env ANSIBLE_FORCE_COLOR=1 ansible-galaxy install -r /tmp/build/requirements.yml
+    docker exec --tty "$(cat ${container_id})" env TERM=xterm
+    ansible-galaxy install -r /tmp/build/requirements.yml
 
 # Run these commands in sequence (a "script") to test our project.
 # Each command listed must return an exit code of `0` for the build,
@@ -63,18 +63,22 @@ script:
 
   # Perform a basic syntax check of all loaded Ansible playbook code.
   - >
-    sudo docker exec "$(cat ${container_id})"
-    env ANSIBLE_FORCE_COLOR=1 ansible-playbook --syntax-check /tmp/build/tests/travis.yml
+    docker exec --tty "$(cat ${container_id})" env TERM=xterm
+    ansible-playbook --syntax-check /tmp/build/tests/travis.yml
 
   # Run the test playbook to ensure Ansible completes successfully.
   - >
-    sudo docker exec "$(cat ${container_id})"
-    env ANSIBLE_FORCE_COLOR=1 ansible-playbook /tmp/build/tests/travis.yml
+    docker exec --tty "$(cat ${container_id})" env TERM=xterm
+    ansible-playbook /tmp/build/tests/travis.yml
 
   # Run the test playbook again to ensure playbook idempotence.
+  - idempotence=$(mktemp)
   - >
-    sudo docker exec "$(cat ${container_id})"
-    env ANSIBLE_FORCE_COLOR=1 ansible-playbook /tmp/build/tests/travis.yml
+    docker exec "$(cat ${container_id})"
+    ansible-playbook /tmp/build/tests/travis.yml
+    | tee -a ${idempotence}
+  - >
+    tail ${idempotence}
     | grep -q 'changed=0.*failed=0'
     && (echo 'Idempotence test: pass' && exit 0)
     || (echo 'Idempotence test: fail' && exit 1)
@@ -84,11 +88,11 @@ script:
                                 # from outside the container.
 
   - >
-    sudo docker exec "$(cat ${container_id})"
-    env nc -z localhost 8080    # Make sure Calibre server is running.
+    docker exec "$(cat ${container_id})" env TERM=xterm
+    nc -z localhost 8080    # Make sure Calibre server is running.
 
 # Politely clean up after ourselves. These commands won't affect the
 # build status but will still be run regardless of success or failure.
 # See https://docs.travis-ci.com/user/job-lifecycle/#breaking-the-build
 after_script:
-  - sudo docker rm -f "$(cat ${container_id})"
+  - docker rm -f "$(cat ${container_id})"

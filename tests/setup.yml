@@ -1,0 +1,14 @@
+---
+- name: Setup test container.
+  hosts: localhost
+
+  tasks:
+    - name: Install Git.
+      package:
+        name: git
+        state: present
+    - name: Install netcat.
+      package:
+        name: netcat
+        state: present
+

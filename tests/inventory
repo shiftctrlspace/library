@@ -1,4 +1,0 @@
-# An inventory for testing the playbook; typically you will want this
-# inventory to contain one host, `localhost` or `127.0.0.1` so that
-# you can test and develop the playbook on your local dev environment.
-localhost
