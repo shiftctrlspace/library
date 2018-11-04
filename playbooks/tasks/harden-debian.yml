@@ -3,7 +3,7 @@
 
 - name: Install base hardening packages.
   apt:
-    update_cache: yes
+    update_cache: true
     name: "{{ packages }}"
   vars:
     packages:

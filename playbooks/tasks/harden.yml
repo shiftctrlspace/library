@@ -5,12 +5,12 @@
   group:
     name: "{{ sshd_allow_group }}"
     state: present
-    system: yes
+    system: true
 
 - name: Add Ansible user to SSH users group.
   user:
     name: "{{ ansible_user_id }}"
-    append: yes
+    append: true
     groups: "{{ sshd_allow_group }}"
 
 - name: Restrict SSH access to specific user group.

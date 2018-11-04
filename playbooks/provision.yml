@@ -3,8 +3,8 @@
 # as Tor Onion service, that can also be administered by SSH over Tor.
 - name: Provision Library nodes with Dark Web access if requested.
   hosts: all
-  become: yes
-  force_handlers: yes
+  become: true
+  force_handlers: true
 
   pre_tasks:
     - name: Run common tasks.
@@ -36,7 +36,7 @@
           synchronize:
             src: "files/{{ web_landing_page_resources_dir }}/"
             dest: /var/www/html/
-            recursive: yes
+            recursive: true
             rsync_opts:
               - "--exclude=.git"
           ignore_errors: true # It's possible we have no files to copy. :)

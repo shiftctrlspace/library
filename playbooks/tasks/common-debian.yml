@@ -9,21 +9,21 @@
       apt:
         name: "{{ unnecessary_packages.common | default([]) + unnecessary_packages.debian | default([]) }}"
         state: absent
-        autoremove: yes
-        purge: yes
+        autoremove: true
+        purge: true
 
     - name: Upgrade remaining packages.
       apt:
-        force_apt_get: yes
-        update_cache: yes
-        upgrade: yes
-        autoremove: yes
+        force_apt_get: true
+        update_cache: true
+        upgrade: true
+        autoremove: true
 
 - name: Check for Raspbian OS.
   register: rpi_issue
   stat:
     path: /etc/rpi-issue
-    get_checksum: no
+    get_checksum: false
 
 - name: Set Raspbian fact.
   set_fact:
