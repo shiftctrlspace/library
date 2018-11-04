@@ -97,7 +97,11 @@ We recommend adding books to library branches by synchronizing them with a maste
 ansible-playbook -i inventories/example/hosts playbooks/synchronize.yml
 ```
 
-Whenever you make a change to your local library from within the Calibre GUI, simply run the above `synchronize.yml` playbook again. This will first (re-)confirm the condition of the Calibre Content server on the remote library branches, and then send any changes you made to them.
+Whenever you make a change to your local library from within the Calibre GUI, simply run the above `synchronize.yml` playbook again. Occasionally, the Calibre Content server may not notice the new additions, so you can optionally follow up by restarting the service:
+
+```sh
+ansible -i inventories/example/hosts --become -m service -a "name=calibre@main.service state=restarted"
+```
 
 ## Developing
 

@@ -19,11 +19,3 @@
         # the `ansible.cfg` config file documentation.
         ssh_args: "-l {{ calibre_server_username }}"
       loop: "{{ calibre_libraries }}"
-
-    - name: Restart Calibre.
-      become: yes
-      service:
-        name: "calibre@{{ item.name }}.service"
-        state: restarted
-      loop: "{{ calibre_libraries }}"
-      changed_when: false
