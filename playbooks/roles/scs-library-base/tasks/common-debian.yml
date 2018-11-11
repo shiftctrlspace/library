@@ -1,0 +1,11 @@
+# Common tasks for Debian-dervived operating systems.
+---
+- name: Check for Raspbian OS.
+  register: rpi_issue
+  stat:
+    path: /etc/rpi-issue
+    get_checksum: false
+
+- name: Include Raspbian-specific tasks.
+  when: rpi_issue.stat.exists
+  import_tasks: "common-raspbian.yml"

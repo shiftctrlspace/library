@@ -1,0 +1,9 @@
+---
+# Whether or not to run initial hardening tasks such as firewalling,
+# SSH server hardening, and so forth.
+hardened_hosts: true
+
+# User group to restrict SSH access to. Users not in this group will
+# not be permitted to log in via SSH to the server. Leave undefined to
+# avoid doing any additional user group SSH hardening.
+#sshd_allow_group: ssh

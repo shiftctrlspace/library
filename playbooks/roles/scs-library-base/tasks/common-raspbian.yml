@@ -1,6 +1,5 @@
----
 # Common tasks for Raspbian OS hosts.
-
+---
 - name: Update Raspberry Pi firmware.
   register: rpi_update
   command: rpi-update

@@ -1,10 +1,10 @@
----
 # Tasks for hardening the base of a Debian-dervied OS host.
-
+---
 - name: Install base hardening packages.
   apt:
     update_cache: true
     name: "{{ packages }}"
+    state: present
   vars:
     packages:
       - iptables
@@ -27,4 +27,5 @@
     - "ip6tables-restore /etc/iptables/rules.v6"
 
 - name: Include Raspbian-specific hardening tasks.
-  include_tasks: "harden-raspbian.yml"
+  when: rpi_issue.stat.exists
+  import_tasks: "harden-raspbian.yml"

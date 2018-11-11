@@ -1,66 +1,5 @@
----
 # Example default configuration for Library nodes (by group).
-
-# If you want you can assume the managed hosts are wholly dedicated to
-# serving content from the Calibre server. To ensure that the most
-# resources are used for the library software, flag that we'll remove
-# unnecessary pacakges in order to free up more disk space.
-#
-# See the `unnecessary_packages` variable for a list of package names
-# that will be removed.
-uninstall_unnecessary_packages: false
-
-# Lists of packages deemed safe to remove, assuming a headless server
-# is desired (i.e., `uninstall_unnecessary_packages` is `true`).
-unnecessary_packages:
-  # Package names that are the same regardless of the underlying OS.
-  common:
-    - "libreoffice"
-    - "libreoffice-gtk"
-    - "tree"
-
-    # Don't use a star glob for these, in case they're not installed.
-    - "wolfram-engine"
-    - "wolframscript"
-
-  debian:
-    - "alacarte"
-    - "alsa-utils"
-    - "ant"
-    - "aptitude*"
-    - "at"
-    - "bluej"
-    - "bsd-mailx"
-    - "bsdmainutils"
-    - "cifs-utils"
-    - "chromium"
-    - "claws-mail"
-    - "crda" # Unnecessary unless your server is connected via Wi-Fi (not recommended anyway)
-    - "dblatex"
-    - "debian-reference-en"
-    - "desktop-base"
-    - "epiphany-browser"
-    - "exim4*"
-    - "geany"
-    - "greenfoot"
-    - "gtk2-engines"
-    - "java-common"
-    - "lightdm"
-    - "lxde"
-    - "lxtask"
-    - "nano"
-    - "nodejs"
-    - "nodered"
-    - "penguinspuzzle"
-    - "piclone"
-    - "pigpio"
-    - "scratch"
-    - "sonic-pi"
-    - "timidity"
-    - "xpdf"
-
-  # TODO: List unnecessary packages on RedHat-based OS's.
-  redhat:
+---
 
 # By default we'll assume that libraries should have security-hardened
 # configurations. Set this to `false` if you prefer to skip hardening.
@@ -68,7 +7,7 @@ hardened_hosts: true
 
 # When hardening hosts (with `hardened_hosts` set to `true`), we won't
 # allow SSH connections from any user not in this specific user group.
-sshd_allow_group: ssh-users
+sshd_allow_group: ssh
 
 # Whether or not to install a Tor server and to provision any Onion
 # services on the managed host.
@@ -129,9 +68,6 @@ onion_services:
       - alice
       - bob
 
-# Landing page variables.
-web_landing_page_resources_dir: "all/public_html"
-
 # Calibre server variables.
 calibre_server_username: calibre
 calibre_server_home_dir: "/srv/{{ calibre_server_username }}"
@@ -149,3 +85,6 @@ calibre_libraries:
   - name: main
     library_dir: "{{ calibre_server_home_dir }}/Calibre Library"
     sync_source: "~/Documents/Calibre Library/" # Trailing slash for "contents of."
+
+# Landing page variables.
+web_landing_page_resources_dir: "all/public_html"

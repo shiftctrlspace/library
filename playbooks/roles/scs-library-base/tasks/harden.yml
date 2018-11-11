@@ -1,0 +1,33 @@
+# Hardening tasks common to all Operating Systems.
+---
+- name: Harden SSH server.
+  when:
+    - sshd_allow_group is defined
+  block:
+    - name: Create SSH users group.
+      group:
+        name: "{{ sshd_allow_group }}"
+        state: present
+        system: true
+
+    - name: Add Ansible user to SSH users group.
+      user:
+        name: "{{ ansible_env.SUDO_USER | default(ansible_env.USER, true) | default(ansible_user_id, true) }}"
+        append: true
+        groups: "{{ sshd_allow_group }}"
+
+    - name: Restrict SSH access to specific user group.
+      # TODO: Eventually, templatize this for more control, as `sshd`
+      #       stops applying options at the first directive found.
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: "^AllowGroups "
+        line: "AllowGroups {{ sshd_allow_group }}"
+        state: present
+      notify: Reload SSH.
+
+- name: Run queued handlers.
+  meta: flush_handlers
+
+- name: Include OS-specific hardening tasks.
+  include_tasks: "harden-{{ ansible_os_family | default('Debian') | lower }}.yml"
