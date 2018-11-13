@@ -3,8 +3,32 @@
   hosts: all
   become: true
 
+  pre_tasks:
+    - name: Determine firewall configuration for Calibre Libraries.
+      when: calibre_libraries is defined
+      block:
+        - name: Get configured Calibre listen ports.
+          set_fact:
+            calibre_ports: "{{ calibre_libraries | selectattr('listen_port', 'defined') | map(attribute='listen_port') | list }}"
+
+        - name: Register Calibre ports with iptables.
+          set_fact:
+            ipv4_tables: >
+              {{ ipv4_tables | combine({
+                'filter': {
+                  'INPUT': {
+                    'rules': ipv4_tables.filter.INPUT.rules + [{
+                      'protocol': 'tcp',
+                      'destination_port': item,
+                      'target': 'ACCEPT'
+                    }]
+                  }
+                }
+              }, recursive=True) }}
+          loop: "{{ calibre_ports }}"
+
   roles:
-    - scs-library-base
+    - common
     - role: tor
       when:
         - tor_onion_service_server is defined

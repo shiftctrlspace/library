@@ -1,5 +1,0 @@
----
-- import_tasks: common.yml
-- import_tasks: harden.yml
-  when:
-    - hardened_hosts

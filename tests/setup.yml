@@ -3,12 +3,12 @@
   hosts: localhost
 
   tasks:
-    - name: Install Git.
+    - name: Install packages.
       package:
-        name: git
+        name: "{{ item }}"
         state: present
-    - name: Install netcat.
-      package:
-        name: netcat
-        state: present
+      loop:
+        - git
+        - openssh-server
+        - netcat
 

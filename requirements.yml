@@ -1,12 +1,15 @@
----
 # This file contains references to externally-supplied Ansible roles
 # required for the project.
+---
+- name: common
+  src: https://github.com/AnarchoTechNYC/ansible-role-common
+  scm: git
+  # The `master` version is the default.
+  #version: master
 
 - name: tor
   src: https://github.com/AnarchoTechNYC/ansible-role-tor
   scm: git
-  # The `master` version is the default.
-  #version: master
 
 - name: lighttpd
   src: https://github.com/AnarchoTechNYC/ansible-role-lighttpd

@@ -13,5 +13,3 @@ Another way to add roles to this project, if you cloned the project repository d
 ```sh
 git submodule add git@your.server.com:moar-books.git moar-books
 ```
-
-In order to help assure a unique name, each project-specific role begins with the `scs-libray-` prefix. For example, the [`scs-library-base`](scs-library-base/) directory contains the `scs-library-base` role.
