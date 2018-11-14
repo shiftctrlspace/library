@@ -9,51 +9,6 @@ hardened_hosts: true
 # allow SSH connections from any user not in this specific user group.
 sshd_allow_group: ssh
 
-# IP network packet filter configuration is provided by the `iptables`
-# role and is considered part of host hardening. If `hardened_hosts`
-# is set to `false`, these configurations are ignored.
-# See https://github.com/AnarchoTechNYC/ansible-role-iptables/#readme
-ipv4_tables:
-  filter:
-    INPUT:
-      policy: DROP
-      rules:
-        - in_interface: lo
-          target: ACCEPT
-        - module: conntrack
-          module_options:
-            - "--ctstate RELATED,ESTABLISHED"
-          target: ACCEPT
-        - protocol: udp
-          destination_port: mdns
-          target: ACCEPT
-        - protocol: tcp
-          destination_port: http
-          target: ACCEPT
-        - protocol: tcp
-          destination_port: ssh
-          target: ACCEPT
-ipv6_tables:
-  filter:
-    INPUT:
-      policy: DROP
-      rules:
-        - in_interface: lo
-          target: ACCEPT
-        - module: conntrack
-          module_options:
-            - "--ctstate RELATED,ESTABLISHED"
-          target: ACCEPT
-        - protocol: udp
-          destination_port: mdns
-          target: ACCEPT
-        - protocol: tcp
-          destination_port: http
-          target: ACCEPT
-        - protocol: tcp
-          destination_port: ssh
-          target: ACCEPT
-
 # Whether or not to install a Tor server and to provision any Onion
 # services on the managed host.
 tor_onion_service_server: true
