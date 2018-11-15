@@ -17,9 +17,7 @@
 
   tasks:
     - name: Install Calibre Content server resources.
-      when:
-        - calibre_server_resources_files is defined
-        - calibre_server_resources_files
+      when: calibre_server_resources_files is defined
       copy:
         src: "{{ calibre_server_resources_files }}/content_server"
         dest: "{{ calibre_server_home_dir }}/.config/calibre/resources/"

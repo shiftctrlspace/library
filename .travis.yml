@@ -10,23 +10,23 @@ language: minimal
 # build per list item (one build for each OS distribution).
 env:
   - distro: debian9
-  - distro: debian8
-  - distro: ubuntu1804
-  - distro: ubuntu1604
-  - distro: centos7
-  - distro: fedora27
+#  - distro: debian8
+#  - distro: ubuntu1804
+#  - distro: ubuntu1604
+#  - distro: centos7
+#  - distro: fedora27
 
 # The above `env` list creates what Travis CI calls a build matrix.
 # We can customize the settings for each job in the build matrix by
 # specifying them explicitly. See:
 # https://docs.travis-ci.com/user/customizing-the-build/
-matrix:
-  allow_failures:
-    - env: distro=debian8
-    - env: distro=ubuntu1804
-    - env: distro=ubuntu1604
-    - env: distro=centos7
-    - env: distro=fedora27
+#matrix:
+#  allow_failures:
+#    - env: distro=debian8
+#    - env: distro=ubuntu1804
+#    - env: distro=ubuntu1604
+#    - env: distro=centos7
+#    - env: distro=fedora27
 
 # Execute these commands before Travis starts its install phase.
 # See https://docs.travis-ci.com/user/job-lifecycle/#the-job-lifecycle

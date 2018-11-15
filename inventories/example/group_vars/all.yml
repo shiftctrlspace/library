@@ -45,7 +45,7 @@ onion_services:
 
   # This Onion service is used primarily for NAT punching.
   - name: onion-ssh # The name of the Onion service directory.
-    version: 2      # The Onion service protocol.
+    version: 2      # The Onion service protocol version.
     virtports:      # The virtual port(s) to expose on the Onion.
       - port_number: 22        # The Onion's port number itself.
         target_addr: 127.0.0.1 # The target address of the service.
@@ -58,7 +58,6 @@ onion_services:
   # This Onion service makes the Calibre library available as an
   # authenticated stealth Onion service to "alice" and "bob".
   - name: onion-library
-    version: 2
     virtports:
       - port_number: 80
         target_addr: 127.0.0.1
@@ -68,9 +67,32 @@ onion_services:
       - alice
       - bob
 
-# Calibre server variables.
-calibre_server_username: calibre
-calibre_server_home_dir: "/srv/{{ calibre_server_username }}"
+# Minimal Lighttpd configuration.
+lighttpd_config:
+  - server:
+      modules:
+        - mod_ssi
+  - server:
+      port: 80
+  - server:
+      username: "{{ lighttpd_server_username }}"
+  - server:
+      groupname: "{{ lighttpd_server_username }}"
+  - server:
+      document-root: "{{ lighttpd_server_home_dir }}/html"
+  - server:
+      tag: ""
+  - index-file:
+      names:
+        - index.html
+  - ssi:
+      exec: "disable"
+  - ssi:
+      extension:
+        - .html
+        - .shtml
+
+# Calibre role variable overrides.
 calibre_server_user_groups:
   - "{{ sshd_allow_group }}"
 
@@ -79,7 +101,7 @@ calibre_server_user_groups:
 #
 # To use the example CalibreBootstrap alternate theme, you must first
 # also initialize its submodule: `git submodule update --init`
-#calibre_server_resources_files: CalibreBootstrap
+#calibre_server_resources_files: "CalibreBootstrap"
 
 calibre_libraries:
   - name: main

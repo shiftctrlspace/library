@@ -2,6 +2,17 @@
 - name: Setup test container.
   hosts: localhost
 
+  pre_tasks:
+    - name: Ensure group_vars directory exists.
+      file:
+        path: /etc/ansible/group_vars
+        state: directory
+
+    - name: Install group vars file.
+      copy:
+        src: group_vars_all.yml
+        dest: /etc/ansible/group_vars/all.yml
+
   tasks:
     - name: Install packages.
       package:
@@ -11,4 +22,3 @@
         - git
         - openssh-server
         - netcat
-

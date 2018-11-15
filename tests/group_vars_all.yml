@@ -1,0 +1,40 @@
+# Example default configuration for Library nodes (by group).
+---
+hardened_hosts: true
+sshd_allow_group: ssh
+
+# Minimal Lighttpd configuration.
+lighttpd_config:
+  - server:
+      modules:
+        - mod_ssi
+  - server:
+      port: 80
+  - server:
+      username: "{{ lighttpd_server_username }}"
+  - server:
+      groupname: "{{ lighttpd_server_username }}"
+  - server:
+      document-root: "{{ lighttpd_server_home_dir }}/html"
+  - server:
+      tag: ""
+  - index-file:
+      names:
+        - index.html
+  - ssi:
+      exec: "disable"
+  - ssi:
+      extension:
+        - .html
+        - .shtml
+
+web_landing_page_resources_dir: "all/public_html"
+
+calibre_server_user_groups:
+  - "{{ sshd_allow_group }}"
+calibre_server_resources_files: CalibreBootstrap
+calibre_libraries:
+  - name: main
+    library_dir: "{{ calibre_server_home_dir }}/Calibre Library"
+    listen_port: 8080
+
