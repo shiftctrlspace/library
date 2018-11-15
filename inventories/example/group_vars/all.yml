@@ -38,6 +38,21 @@ tor_onion_services_backup_password: !vault |
 # service secrets than for other secrets in your playbooks.
 #tor_onion_services_backup_vault_id: "tor-backup"
 
+# Enable the Vanguards high-security Tor Controller add-on script.
+#tor_onion_services_vanguards:
+#  version: "v0.2.2"
+#  args:
+#    #state: "/var/run/vanguards/vanguards.state"
+#    config: "/etc/tor/vanguards.conf"
+#    #control_ip: "{{ inventory_hostname }}"
+#    #control_port: "{{ torrc.ControlPort.port }}"
+#    #control_socket: "{{ torrc.ControlSocket }}"
+#    #disable_vanguards: false
+#    #disable_bandguards: true
+#    enable_cbtverify: true
+#  config:
+#    control_pass: "{{ torrc.HashedControlPasswords[0] }}"
+
 # Define the Onion services you want available on the managed host.
 # None of these will be added unless the `tor_onion_service_server`
 # variable is `true`.
