@@ -12,7 +12,7 @@ sshd_allow_group: ssh
 # Part of host hardening is the addition of an IP packet filtering
 # firewall. By default, it has a bare minimum of ports open. We'll set
 # it to open an additional port for multicast DNS (Avahi/ZeroConf).
-open_ports:
+iptables_open_ports:
   - protocol: udp
     destination_port: 5353
 
