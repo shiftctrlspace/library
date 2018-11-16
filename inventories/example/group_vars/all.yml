@@ -9,6 +9,13 @@ hardened_hosts: true
 # allow SSH connections from any user not in this specific user group.
 sshd_allow_group: ssh
 
+# Part of host hardening is the addition of an IP packet filtering
+# firewall. By default, it has a bare minimum of ports open. We'll set
+# it to open an additional port for multicast DNS (Avahi/ZeroConf).
+open_ports:
+  - protocol: udp
+    destination_port: 5353
+
 # Whether or not to install a Tor server and to provision any Onion
 # services on the managed host.
 tor_onion_service_server: true

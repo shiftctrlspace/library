@@ -1,4 +1,21 @@
 ---
+- name: Open ports in IPv4 firewall.
+  when: open_ports is defined
+  set_fact:
+    ipv4_tables: >
+      {{ ipv4_tables | combine({
+          'filter': {
+            'INPUT': {
+              'rules': ipv4_tables.filter.INPUT.rules + [
+                item | combine({
+                  'target': 'ACCEPT'
+                })
+              ]
+            }
+          }
+      }, recursive=True) }}
+  loop: "{{ open_ports }}"
+
 - name: Determine firewall configuration for Libraries.
   when: calibre_libraries is defined
   block:
