@@ -1,11 +1,11 @@
----
 # Playbook for populating a Library with content from a sync source.
-- name: Send books to Libraries.
+---
+- name: Synchronize Library branches.
   hosts: all
   gather_facts: false
 
   tasks:
-    - name: Synchronize remote Library with local copy.
+    - name: Send local books to Library branch.
       synchronize:
         src: "{{ item.sync_source }}"
         dest: "'{{ item.library_dir }}'" # Quote to escape spaces.

@@ -115,6 +115,8 @@ lighttpd_config:
         - .shtml
 
 # Calibre role variable overrides.
+calibre_server_username: calibre
+calibre_server_home_dir: "/srv/{{ calibre_server_username }}"
 calibre_server_user_groups:
   - "{{ sshd_allow_group }}"
 
