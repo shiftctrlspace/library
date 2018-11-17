@@ -4,16 +4,68 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ ansible_hostname }} local resources</title>
+    <style>
+        * {
+            --text-color: #FFF;
+            --page-background-color: #ce1283;
+            --gradient-start: #30DB41;
+            --gradient-middle: #a185c0;
+            --gradient-end: var(--page-background-color);
+        }
+        @font-face {
+            font-family: "Times Sans Serif";
+            src: url("fonts/TIMES_SANS_SERIF.ttf") format("truetype");
+        }
+        html,
+        body {
+            margin: 0;
+            border: none;
+            padding: 0;
+        }
+        #PageWrapper {
+            padding: 1em 0;
+            background: linear-gradient(315deg, var(--gradient-start), var(--gradient-middle) 50%, var(--gradient-end));
+            min-height: 100vh;
+            color: var(--text-color);
+        }
+        main {
+            width: 60%;
+            margin: 0 auto;
+            border: 5px solid #FFF;
+            padding: 2em;
+            font: 1.25em "Times Sans Serif", monospace;
+        }
+        main h1 {
+            margin: 0;
+        }
+        header {
+            text-align: center;
+        }
+        header img {
+            max-width: 50%;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to the {{ ansible_hostname }} local resource center</h1>
-    {% if calibre_libraries is defined %}
-    <p>Libraries available:</p>
-    <ul>
-        {% for library in calibre_libraries %}
-        <li><a href="//<!--#echo var="HTTP_HOST" -->:{{ library.listen_port | default(8080) }}/">{{ library.name }} Library</a></li>
-        {% endfor %}
-    </ul>
-    {% endif %}
+    <div id="PageWrapper">
+        <main>
+            <header>
+                <h1>Welcome to the {{ ansible_hostname }} Local Resource Center</h1>
+            </header>
+            <p>Hi there, and welcome to a warmer digital future.</p>
+            {% if calibre_libraries is defined %}
+            <p>Our Libraries provide a hefty selection of digitized original books, zines, radical magazines, comics, posters, report-backs, DIY and indie publications, and reference material on topics including community building, skillsharing, politics, philosophy, poetry, hacking, art, activism, technology, queer theory, local issues, and more. Choose a Library from the list below to start browsing:</p>
+            <ul>
+                {% for library in calibre_libraries %}
+                <li><a href="//<!--#echo var="HTTP_HOST" -->:{{ library.listen_port | default(8080) }}/">{{ library.name }} Library</a></li>
+                {% endfor %}
+            </ul>
+            <p>This collection is constantly growing! If you have a zine or other text you'd like to distribute here, please let us know! Tell the staff here about your publication or project. :D</p>
+            {% endif %}
+            <h2>This is not an &ldquo;Internet&rdquo; website!</h2>
+            <p>The resources provided here can only be accessed while you are connected to <em>this</em> network (the Wi-Fi network of this venue). The <code>.local</code> domain (or <a href="https://github.com/AnarchoTechNYC/meta/wiki/IP-address">IP address</a>) that you typed in to get here <em>cannot</em> be used to load this page when you are not physically here. Put another way, you <em>must</em> be sitting near where you are at this moment, with your device connected to this very same network, in order to access these resources!</p>
+            <p style="margin-top: 3em;"><small>This resource center was built by your friendly neighborhood queer hackers at <a href="https://shiftctrl.space">ShiftCTRL</a>. We're constructing more local infrastructure every day. Please enjoy. ;)</small></p>
+        </main>
+    </div><!-- #PageWrappter -->
 </body>
 </html>

@@ -45,9 +45,10 @@
           synchronize:
             src: "files/{{ web_landing_page_resources_dir }}/"
             dest: /var/www/html/
-            recursive: true
             rsync_opts:
               - "--exclude=.git"
+          # FIXME: Why does the `rsync` command always return changed?
+          changed_when: false
 
         - name: Ensure Web landing page directory structure exists.
           when: item.state == "directory"
