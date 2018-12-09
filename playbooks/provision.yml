@@ -47,6 +47,8 @@
             dest: /var/www/html/
             rsync_opts:
               - "--exclude=.git"
+              - "--chown={{ lighttpd_server_username }}:{{ lighttpd_server_username }}"
+              - "--chmod=D555,F444"
           # FIXME: Why does the `rsync` command always return changed?
           changed_when: false
 
@@ -55,6 +57,9 @@
           file:
             path: "/var/www/html/{{ item.path }}"
             state: directory
+            owner: "{{ lighttpd_server_username }}"
+            group: "{{ lighttpd_server_username }}"
+            mode: "555"
           with_filetree: "templates/{{ web_landing_page_resources_dir }}"
 
         - name: Write Web landing page templates.
@@ -62,4 +67,7 @@
           template:
             src: "{{ item.src }}"
             dest: "/var/www/html/{{ item.path }}"
+            owner: "{{ lighttpd_server_username }}"
+            group: "{{ lighttpd_server_username }}"
+            mode: "444"
           with_filetree: "templates/{{ web_landing_page_resources_dir }}"
