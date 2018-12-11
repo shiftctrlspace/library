@@ -16,6 +16,12 @@
             font-family: "Times Sans Serif";
             src: url("fonts/TIMES_SANS_SERIF.ttf") format("truetype");
         }
+        a {
+            color: yellow;
+        }
+        a:visited {
+            color: gold;
+        }
         html,
         body {
             margin: 0;
@@ -94,6 +100,13 @@
                 {% endfor %}
             </ul>
             <p>This collection is constantly growing! If you have a zine or other text you'd like to distribute here, please let us know! Tell the staff here about your publication or project. :D</p>
+            <h3>📚 For an even better reading experience&hellip;</h3>
+            <ul>
+                <li>If you have an iPhone, consider trying out an <acronym title="Open Publication Distribution System"><a href="https://en.wikipedia.org/wiki/OPDS">OPDS</a></acronym> browser application, such as <a href="https://itunes.apple.com/us/app/kybook-epub-fb2-pdf-djvu-reader/id673027171">KyBook Reader</a>.</li>
+                <li>Android users, you may want to install <a href="https://f-droid.org/">F-Droid</a> (an alternative to the Google Play Store that lets you download and install paid apps completely free of charge), and then from there install <a href="https://f-droid.org/packages/org.geometerplus.zlibrary.ui.android/">FBReader</a>.</li>
+            </ul>
+            <h3>How the Library works</h3>
+            <p>The Digital Library runs on free software called <a href="https://calibre-ebook.com/">Calibre</a>, which provides cataloging functionality, metadata retrieval, Web-based distribution, and more out-of-the-box. Free software plugins (written in <a href="https://www.python.org/">Python</a>) can provide additional features, such as <a href="https://apprenticealf.wordpress.com/2012/09/10/calibre-plugins-the-simplest-option-for-removing-most-ebook-drm/">DRM removal</a>.</p>
             {% endif %}
             <h2>This is not an &ldquo;Internet&rdquo; website!</h2>
             <p>The resources provided here can only be accessed while you are connected to <em>this</em> network (the Wi-Fi network of this venue). The <code>.local</code> domain (or <a href="https://github.com/AnarchoTechNYC/meta/wiki/IP-address">IP address</a>) that you typed in to get here <em>cannot</em> be used to load this page when you are not physically here. Put another way, you <em>must</em> be sitting near where you are at this moment, with your device connected to this very same network, in order to access these resources!</p>
