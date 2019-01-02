@@ -20,6 +20,7 @@ Once again, we encourage you to acquire the skills you need to manage this Libra
     1. [Downloading the project code](#downloading-the-project-code)
     1. [Deploying a new Library branch](#deploying-a-new-library-branch)
     1. [Adding, removing, and editing the metadata of books](#adding-removing-and-editing-the-metadata-of-books)
+    1. [Keeping your Library free of viruses and malware](#keeping-your-library-free-of-viruses-and-malware)
 1. [Developing](#developing)
 
 ## Libraries, Librarians, and Library cards
@@ -102,6 +103,12 @@ Whenever you make a change to your local library from within the Calibre GUI, si
 ```sh
 ansible -i inventories/example/hosts --become -m service -a "name=calibre@main.service state=restarted"
 ```
+
+### Keeping your Library free of viruses and malware
+
+An ounce of prevention is worth a pound of cure. In other words, try to avoid adding files to your Library that contain viruses or malware in the first place. The best way to do this is to receive files from trusted sources and to closely inspect each file you intend to add to your Library before you add it. You can inspect files manually, or using any number of anti-virus tools and scanners.
+
+Alternatively, you can use the provided `scan-library.sh` utility. It is a small [Bash shell](https://en.wikipedia.org/wiki/Bash_%28Unix_shell%29) script that finds all significant files within a Calibre Library folder and scans them against more than sixty anti-virus scanners using the [VirusTotal](https://virustotal.com/) public [API](https://www.virustotal.com/en/documentation/public-api/). To use this script, you will need to install the free [VirusTotal command-line tool, `vt`](https://github.com/VirusTotal/vt-cli/blob/master/README.md#installing-the-tool). Once installed, use `bin/scan-library.sh --help` for usage information.
 
 ## Developing
 
