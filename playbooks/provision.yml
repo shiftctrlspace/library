@@ -7,20 +7,6 @@
     - name: Register firewall configuration.
       import_tasks: tasks/configure-firewall.yml
 
-    - name: Register custom Onion configuration.
-      when:
-        - onion_services is defined
-        - onion_services_overrides is defined
-      block:
-        - name: Make list of overridden Onion services.
-          include_tasks: tasks/configure-onions.yml
-          loop: "{{ onion_services | product(onion_services_overrides) | list }}"
-          loop_control:
-            index_var: i
-        - name: Reset Onion service configuration from overrides list.
-          set_fact:
-            onion_services: "{{ overridden_onion_services }}"
-
   roles:
     - common
     - calibre
