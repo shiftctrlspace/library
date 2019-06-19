@@ -50,11 +50,11 @@ install:
   # Set up the container itself to run our tests.
   - >
     docker exec --tty "$(cat ${container_id})" env TERM=xterm
-    ansible-playbook /tmp/build/tests/setup.yml
+    ansible-playbook /tmp/build/tests/setup.yaml
 
   - >
     docker exec --tty "$(cat ${container_id})" env TERM=xterm
-    ansible-galaxy install -r /tmp/build/requirements.yml
+    ansible-galaxy install -r /tmp/build/requirements.yaml
 
 # Run these commands in sequence (a "script") to test our project.
 # Each command listed must return an exit code of `0` for the build,
@@ -64,18 +64,18 @@ script:
   # Perform a basic syntax check of all loaded Ansible playbook code.
   - >
     docker exec --tty "$(cat ${container_id})" env TERM=xterm
-    ansible-playbook --syntax-check /tmp/build/tests/travis.yml
+    ansible-playbook --syntax-check /tmp/build/tests/travis.yaml
 
   # Run the test playbook to ensure Ansible completes successfully.
   - >
     docker exec --tty "$(cat ${container_id})" env TERM=xterm
-    ansible-playbook /tmp/build/tests/travis.yml
+    ansible-playbook /tmp/build/tests/travis.yaml
 
   # Run the test playbook again to ensure playbook idempotence.
   - idempotence=$(mktemp)
   - >
     docker exec "$(cat ${container_id})"
-    ansible-playbook /tmp/build/tests/travis.yml
+    ansible-playbook /tmp/build/tests/travis.yaml
     | tee -a ${idempotence}
   - >
     tail ${idempotence}

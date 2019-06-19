@@ -1,5 +1,5 @@
 # Main playbook for creating a Calibre Library optionally exposed as a
 # Tor Onion service, that can also be administered by SSH over Tor.
 ---
-- import_playbook: provision.yml
-- import_playbook: synchronize.yml
+- import_playbook: provision.yaml
+- import_playbook: synchronize.yaml

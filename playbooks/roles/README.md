@@ -1,9 +1,9 @@
 # Library roles
 
-This directory contains project-specific [Ansible roles](https://docs.ansible.com/ansible/latest/user_guide/playbooks_reuse_roles.html), that is, roles that are not maintained separately as their own project (and thus generic enough to warrant inclusion through [`requirements.yml`](../../requirements.yml) file instead of directly placing them into this folder). Those roles can be installed into this directory by invoking `ansible-galaxy` with the `--roles-path` option. For example, from the project root:
+This directory contains project-specific [Ansible roles](https://docs.ansible.com/ansible/latest/user_guide/playbooks_reuse_roles.html), that is, roles that are not maintained separately as their own project (and thus generic enough to warrant inclusion through [`requirements.yaml`](../../requirements.yaml) file instead of directly placing them into this folder). Those roles can be installed into this directory by invoking `ansible-galaxy` with the `--roles-path` option. For example, from the project root:
 
 ```sh
-ansible-galaxy install -r requirements.yml --roles-path roles/
+ansible-galaxy install -r requirements.yaml --roles-path roles/
 ```
 
 Omitting `--roles-path` will place the required roles in whatever directory your Ansible is configured to use (`/etc/ansible/roles` by default).

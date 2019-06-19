@@ -10,8 +10,8 @@
 
     - name: Install group vars file.
       copy:
-        src: group_vars_all.yml
-        dest: /etc/ansible/group_vars/all.yml
+        src: group_vars_all.yaml
+        dest: /etc/ansible/group_vars/all.yaml
 
   tasks:
     - name: Install packages.

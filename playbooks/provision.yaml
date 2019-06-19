@@ -5,7 +5,7 @@
 
   pre_tasks:
     - name: Register firewall configuration.
-      import_tasks: tasks/configure-firewall.yml
+      import_tasks: tasks/configure-firewall.yaml
 
   roles:
     - common
