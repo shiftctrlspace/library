@@ -1,6 +1,7 @@
 # Example default configuration for Library nodes (by group).
 ---
 hardened_hosts: true
+enable_root_fs_disk_quotas: false # Don't do disk quotas on Travis CI.
 sshd_allow_group: ssh
 
 # Minimal Lighttpd configuration.
