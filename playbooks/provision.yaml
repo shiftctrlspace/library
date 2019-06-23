@@ -7,6 +7,15 @@
     - name: Register firewall configuration.
       import_tasks: tasks/configure-firewall.yaml
 
+    # If OnionShare is requested, run this before the Common role.
+    # This is because we will probably also want a disk quota and
+    # thus need to have the OnionShare OS user account exist first.
+    - name: OnionShare first.
+      when:
+        - onionshare_receiver_mode | default(false)
+      import_role:
+        name: onionshare
+
   roles:
     - common
     - calibre
@@ -18,12 +27,6 @@
       when:
         - tor_onion_service_server | default(false)
         - not onionshare_receiver_mode | default(false)
-
-    # The OnionShare role will run the Tor role.
-    - role: onionshare
-      when:
-        - tor_onion_service_server | default(false)
-        - onionshare_receiver_mode | default(false)
 
   tasks:
     - name: Install Calibre Content server resources.
