@@ -1,0 +1,10 @@
+# Example host-specific inventory variable file for `raspberry.local`.
+---
+
+# Whether to enable the OnionShare receiving server on this host.
+onionshare_receiver_mode: false
+
+# Enforce some user disk quotas for the OnionShare receiver.
+disk_quotas_users:
+    - name: "{{ onionshare_username }}"
+      block_hard: 5G

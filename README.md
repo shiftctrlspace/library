@@ -8,7 +8,9 @@ That said, to set up your own Library, some initial resources are required. Thes
 * An Internet connection, at least while setting up the Library initially. The cheapest plan from your local Internet Service Provider will almost certainly suffice. If you want to make your Library accessible to people who are not physically nearby (such as connected to the same Wi-Fi network as the Library hardware itself), you will also need to retain an Internet connection so that the Library can function as a remote server. Otherwise, you can simply set up the Library in a location where you have Internet access and then move it to some place you do not; the Library will continue to make its content available to the local area network to which it is connected.
 * Some basic knowledge of command-line GNU/Linux system administration. If this is a new area for you, we highly recommend the NYC chapter of the Anarcho-Tech Collective's "[Foundations](https://github.com/AnarchoTechNYC/meta/wiki/Foundations)" series. In particular, we suggest starting at their "[Securing a Shell Account on a Shared Server](https://github.com/AnarchoTechNYC/meta/blob/master/train-the-trainers/practice-labs/securing-a-shell-account-on-a-shared-server/README.md)" guide if command-line interfaces are completely new to you.
 
-To deploy and manage a Library, this project uses [Ansible playbooks](https://docs.ansible.com/ansible/latest/user_guide/playbooks.html) that provision a simple Web server built into [Calibre](https://calibre-ebook.com/) (its [Content server](https://manual.calibre-ebook.com/generated/en/calibre-server.html)) to a given host or set of hosts. Moreover, by default, the [`provision.yaml` playbook](playbooks/provision.yaml) will build a [Tor](https://torproject.org/) server from the Tor Project's GPG-signed source code, and expose the Calibre library as a stealth Onion service to a number of authenticated clients. This means people who want to access the Library from afar will need to use and configure their local Tor clients (such as [Tor Browser](https://www.torproject.org/download/download-easy.html)) with the appropriate access credentials ("library cards") before they are able to connect. (This feature requires a sustained Internet connection.)
+To deploy and manage a Library, this project uses [Ansible playbooks](https://docs.ansible.com/ansible/latest/user_guide/playbooks.html) that provision a simple Web server built into [Calibre](https://calibre-ebook.com/) (its [Content server](https://manual.calibre-ebook.com/generated/en/calibre-server.html)) to a given host or set of hosts.
+
+Moreover, by default, the [`provision.yaml` playbook](playbooks/provision.yaml) will build a [Tor](https://torproject.org/) server from the Tor Project's GPG-signed source code, and expose the Calibre library as a stealth Onion service to a number of authenticated clients. This means people who want to access the Library from afar will need to use and configure their local Tor clients (such as [Tor Browser](https://www.torproject.org/download/download-easy.html)) with the appropriate access credentials ("library cards") before they are able to connect. Additionally, you can optionally enable "`onionshare_receiver_mode`" (based on [OnionShare](https://onionshare.org/)), which will create a second Onion service that allows anyone to anonymously upload new files in a sort of drop box for a Librarian to review in order to more organically grow the Library. Both of these features require a sustained Internet connection.
 
 Once again, we encourage you to acquire the skills you need to manage this Library from the [Anarcho-Tech Collective](https://github.com/AnarchoTechNYC/meta/wiki)'s great guides and [practice labs](https://github.com/AnarchoTechNYC/meta/tree/master/train-the-trainers/practice-labs/). It won't take as long as you might fear, and what you learn will be useful for the rest of your life. Promise.
 
@@ -119,7 +121,7 @@ We recommend adding books to library branches by synchronizing them with a maste
 ansible-playbook -i inventories/example/hosts playbooks/synchronize.yaml
 ```
 
-Whenever you make a change to your local library from within the Calibre GUI, simply run the above `synchronize.yaml` playbook again. Adding a second Library branch is straightforward: preapre its hardware as above, and then add it to your Ansible inventory. Future synchronizations will sync *all* Library branches in parallel.
+Whenever you make a change to your local library from within the Calibre GUI, simply run the above `synchronize.yaml` playbook again. Adding a second Library branch is straightforward: prepare its hardware as above, and then add it to your Ansible inventory. Future synchronizations will sync *all* Library branches in parallel.
 
 Occasionally, the Calibre Content server may not notice the new additions after a sync. This most often happens when a patron is actively browsing the Library while a synchronization process is updating the Calibre Library's `metadata.db` database file. Letting the Library remain idle for a little while (an hour?) will often be enough to refresh the books list, but you can optionally follow a synchronization by restarting the Calibre Content server's service like so to flush the old database out of memory and reload the updated one:
 
@@ -128,6 +130,33 @@ ansible -i inventories/example/hosts --become -m service -a "name=calibre@main.s
 ```
 
 Future visits to the Library should now show the newly synchronized Library contents to all visitors.
+
+#### Enabling OnionShare receiver mode
+
+To allow uploads to your Library branch computer, you can enable "`onionshare_receiver_mode`" on one or more of your Library branch hosts. To keep things simple, we recommend that you enable this mode on only one of your Library branch computers. The [`inventories/example/host_vars/raspberry.local.yaml` file](inventories/example/host_vars/raspberry.local.yaml) provides an example configuration for the example inventory setup discussed in this README. It looks something like this:
+
+```yaml
+# Example host-specific inventory variable file for `raspberry.local`.
+---
+onionshare_receiver_mode: true
+disk_quotas_users:
+    - name: "{{ onionshare_username }}"
+      block_hard: 5G
+```
+
+The important line is `onionshare_receiver_mode: true`, which will enable provisioning of the OnionShare server in receive mode. The second item, the `disk_quotas_users` list, defines the disk space usage limit for the Operating System user account under which the OnionShare server runs. This prevents files that anonymous users upload from using more than the permitted amount of space on the Library branch filesystem. It is set to 5 gibibytes by default, but you can [adjust this](https://github.com/AnarchoTechNYC/ansible-role-common/blob/master/README.md#configuring-disk-quotas) if you wish.
+
+Once deployed, you can find the Onion service's address in the [systemd journal](https://www.freedesktop.org/software/systemd/man/systemd-journald.service.html) for your Library branch's `onionshare.service` unit:
+
+```sh
+# Using an Ansible ad-hoc command:
+ansible raspberry.local -i inventories/example/hosts --ask-pass -m "shell" -a "journalctl --unit onionshare.service | grep -A 1 'Give this address to the sender'"
+
+# Or using plain old SSH:
+ssh pi@raspberry.local journalctl --unit onionshare.service | grep -A 1 'Give this address to the sender'
+```
+
+Of course, allowing anonymous users to upload files to your Library branch computer means that an attacker could upload a malicious file such as malware or a virus that will take over the computer that opens the file, so please [take precautions and educate yourself about the risks and mitigations available to you](#keeping-your-library-free-of-viruses-and-malware) before accepting files from others.
 
 ### Keeping your Library free of viruses and malware
 

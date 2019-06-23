@@ -11,6 +11,10 @@
   src: https://github.com/AnarchoTechNYC/ansible-role-tor
   scm: git
 
+- name: onionshare
+  src: https://github.com/AnarchoTechNYC/ansible-role-onionshare
+  scm: git
+
 - name: lighttpd
   src: https://github.com/AnarchoTechNYC/ansible-role-lighttpd
   scm: git

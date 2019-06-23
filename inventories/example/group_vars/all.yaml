@@ -20,6 +20,12 @@ iptables_open_ports:
 # services on the managed host.
 tor_onion_service_server: true
 
+# Whether or not to install an OnionShare receiving server. This is
+# set to `false` by default, and should be changed to `true` only on
+# a per-host basis. (You don't need an OnionShare server receiving
+# files on each and every Library branch; you only need one, really.)
+onionshare_receiver_mode: false
+
 # Root folder where backup copies of Onion service secrets are stored.
 #tor_onion_services_backup_dir: "{{ lookup('env', 'HOME') }}/onion-service-backups"
 

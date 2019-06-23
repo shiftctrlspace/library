@@ -11,8 +11,19 @@
     - common
     - calibre
     - lighttpd
+
+    # Run the Tor role for a Tor server that's NOT also an OnionShare
+    # receiver; OnionShare receiving servers enact Tor automatically.
     - role: tor
-      when: tor_onion_service_server | default(false)
+      when:
+        - tor_onion_service_server | default(false)
+        - not onionshare_receiver_mode | default(false)
+
+    # The OnionShare role will run the Tor role.
+    - role: onionshare
+      when:
+        - tor_onion_service_server | default(false)
+        - onionshare_receiver_mode | default(false)
 
   tasks:
     - name: Install Calibre Content server resources.
