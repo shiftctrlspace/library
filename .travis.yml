@@ -1,10 +1,13 @@
 # This file provides integration with the Travis-CI.org build service.
 ---
+version: ~> 1.0
+
 # Strictly speaking, we don't really need to set a language as we are
 # building inside containers, but this speeds build time by requesting
 # a minimal host image (e.g., no need to install stuff we won't use).
 # See: https://docs.travis-ci.com/user/languages/minimal-and-generic/
-language: minimal
+os: linux
+language: shell
 
 # We set the following environment variables in order to trigger one
 # build per list item (one build for each OS distribution).
@@ -20,7 +23,7 @@ env:
 # We can customize the settings for each job in the build matrix by
 # specifying them explicitly. See:
 # https://docs.travis-ci.com/user/customizing-the-build/
-#matrix:
+#jobs:
 #  allow_failures:
 #    - env: distro=debian8
 #    - env: distro=ubuntu1804
@@ -34,6 +37,10 @@ env:
 
 # Set up Travis's build environment for our project with these steps.
 install:
+  # Ensure IPv6 NetFilter kernel module is loaded.
+  # (Travis removed this by default at some point.)
+  - sudo modprobe ip6table_filter
+
   - docker pull geerlingguy/docker-${distro}-ansible
 
   - container_id=$(mktemp)
